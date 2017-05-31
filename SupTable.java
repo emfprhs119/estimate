@@ -67,8 +67,8 @@ public class SupTable extends JPanel {
 
 		table = new MyJTable((Object[][]) row, column);
 		tableAdd = new MyJTable((Object[][]) rowmax, column);
-		table.getTableHeader().setFont(new Font(Main.font, 0, Main.size));
-		tableAdd.getTableHeader().setFont(new Font(Main.font, 0, Main.size));
+		table.getTableHeader().setFont(new Font(Main.font, 0, Main.fontSize));
+		tableAdd.getTableHeader().setFont(new Font(Main.font, 0, Main.fontSize));
 		JScrollPane scroll = new JScrollPane(table);
 		scroll.setBackground(Color.WHITE);
 		JScrollPane scrollAdd = new JScrollPane(tableAdd);
@@ -89,12 +89,12 @@ public class SupTable extends JPanel {
 		sumR2.setBounds(18+32, 830+31, 719, 35);
 		
 		sumF2.setText("гу╟Х");
-		sumF2.setFont(new Font(Main.font, Font.BOLD, Main.size/2*3));
+		sumF2.setFont(new Font(Main.font, Font.BOLD, Main.fontSize/2*3));
 		sumF2.setHorizontalAlignment(JTextField.CENTER);
 		sumF2.setBackground(Color.white);
 		sumF2.setBounds(18+32,830+31,301, 35);
 		
-		sumT2.setFont(new Font(Main.font, Font.BOLD,  Main.size));
+		sumT2.setFont(new Font(Main.font, Font.BOLD,  Main.fontSize));
 		sumT2.setHorizontalAlignment(JTextField.RIGHT);
 		sumT2.setBackground(Main.color);
 		sumT2.setBounds(607+32,830+31,87, 35);
@@ -324,9 +324,9 @@ public class SupTable extends JPanel {
 		// Font f=new Font();
 		table.setRowHeight(23);
 		// table.setFont(new Font(null, 0, 50));
-		OneCellRenderer centerRenderer = new OneCellRenderer(Main.font, Main.size);
-		OneCellRenderer leftRenderer = new OneCellRenderer(Main.font, Main.size);
-		OneCellRenderer rightRenderer = new OneCellRenderer(Main.font, Main.size);
+		OneCellRenderer centerRenderer = new OneCellRenderer(Main.font, Main.fontSize);
+		OneCellRenderer leftRenderer = new OneCellRenderer(Main.font, Main.fontSize);
+		OneCellRenderer rightRenderer = new OneCellRenderer(Main.font, Main.fontSize);
 		leftRenderer.setHorizontalAlignment(JLabel.LEFT);
 		rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
 		centerRenderer.setHorizontalAlignment(JLabel.CENTER);
