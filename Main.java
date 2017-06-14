@@ -1,35 +1,10 @@
 import java.awt.Color;
-import java.awt.Container;
-import java.awt.Graphics;
-import javax.swing.JPanel;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
-//배경이 하얀색이고 layout이 null인 Container 외곽선 draw
-class ContainerRect extends Container {
-	private static final long serialVersionUID = 6805380713240246261L;
-	ContainerRect(){
-		super();
-		setLayout(null);
-	}
-	public void paint(Graphics g) {
-		super.paint(g);
-		g.drawRect(0, 0, 755,875);
-	}
-	
-}
-
-//배경이 하얀색이고 layout이 null인 panel
-class MyPanel extends JPanel {
-	private static final long serialVersionUID = 5640668174921441140L;
-	MyPanel(){
-		setBackground(Color.WHITE);
-		setLayout(null);
-	}
-}
 
 public class Main {
 	final static Color color = Color.getHSBColor((float) 0.160, (float) 0.42, (float) 0.98);

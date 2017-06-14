@@ -62,8 +62,8 @@ class DemandF {
 }
 
 class AddDemandFrame extends JFrame {
-	private MyPanel pane0;
-	private MyPanel pane00;
+	private WhitePanel pane0;
+	private WhitePanel pane00;
 	private JPanel[] menu;
 	private JPanel[] m;
 	private JTextField[] t;
@@ -73,8 +73,8 @@ class AddDemandFrame extends JFrame {
 	AddDemandFrame(final Func func) {
 		setLayout(null);
 		setBounds(500, 500, 235, 170);
-		pane0 = new MyPanel();
-		pane00 = new MyPanel();
+		pane0 = new WhitePanel();
+		pane00 = new WhitePanel();
 		pane0.setLayout(null);
 		pane0.setBounds(65, 0, 180, 130);
 		pane00.setBounds(0, 0, 65, 130);
@@ -164,8 +164,8 @@ class AddDemandFrame extends JFrame {
 	}
 }
 
-public class Demand extends MyPanel {
-	MyPanel pane0, pane00;
+public class Demand extends WhitePanel {
+	WhitePanel pane0, pane00;
 	JPanel menu[];
 	JPanel m[];
 	JTextField t[];
@@ -225,8 +225,8 @@ public class Demand extends MyPanel {
 		frame.add(searchField);
 		frame.add(searchButton);
 		frame.add(panel);
-		pane0 = new MyPanel();
-		pane00 = new MyPanel();
+		pane0 = new WhitePanel();
+		pane00 = new WhitePanel();
 		pane0.setBounds(45, 4, 350, 120);
 		pane00.setBounds(15, 0, 115, 120);
 
@@ -309,7 +309,7 @@ public class Demand extends MyPanel {
 		addFrame = new AddDemandFrame(func);
 	}
 
-	void panelInit(MyPanel mainPanel) {
+	void panelInit(WhitePanel mainPanel) {
 
 		mainPanel.add(pane00);
 		mainPanel.add(pane0);

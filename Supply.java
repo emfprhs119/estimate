@@ -19,10 +19,10 @@ class SupplyF{
 	String fax;
 }
 
-public class Supply extends MyPanel {
+public class Supply extends WhitePanel {
 
 	JLabel sup[] = new JLabel[8];
-	MyPanel pane=this;
+	WhitePanel pane=this;
 	
 	Supply() {
 		supplyInit();

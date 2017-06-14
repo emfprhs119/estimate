@@ -34,7 +34,12 @@ import org.jdatepicker.impl.UtilDateModel;
 public class Load extends JFrame {
 	JTable table;
 	JPanel panel;
-	MainFrame mainFrame;
+	
+	SupTable supTable;
+	Demand demand;
+	JLabel file;
+	JLabel page;
+	//MainFrame mainFrame;
 	ManageList manageList;
 	Object row[][];
 
@@ -54,11 +59,15 @@ public class Load extends JFrame {
 	JDatePanelImpl datePanel2 = new JDatePanelImpl(model2, new Properties());
 	JDatePickerImpl datePicker2 = new JDatePickerImpl(datePanel2, new DateFormatter());
 
-	Load(MainFrame mainFrame) {
-
+	Load(SupTable subTable,Demand demand,JLabel file,JLabel page) {
+		this.supTable=subTable;
+		this.demand=demand;
+		this.file=file;
+		this.page=page;
+		
 		manageList = new ManageList();
 		actionLis = new ActionLis(manageList, this);
-		this.mainFrame = mainFrame;
+		//this.mainFrame = mainFrame;
 		panel = new JPanel();
 		setBounds(200+838, 200, 350, 700);
 		setLayout(null);
@@ -113,13 +122,13 @@ public class Load extends JFrame {
 						return;
 					loadFile(new String("견적서_" + manageList.saveListMatch[sel].name + "_" + manageList.saveListMatch[sel].date + "_"
 							+ manageList.saveListMatch[sel].no + ".save"));
-					mainFrame.file.setText(new String("견적서_" + manageList.saveListMatch[sel].name + "_"
+					file.setText(new String("견적서_" + manageList.saveListMatch[sel].name + "_"
 							+ manageList.saveListMatch[sel].date + "_" + manageList.saveListMatch[sel].no));
-					mainFrame.file.setBounds(419 - mainFrame.file.getText().length() * 5, 5, 300, 20);
+					file.setBounds(419 - file.getText().length() * 5, 5, 300, 20);
 					//setVisible(false);
 					Main.modify = false;
-					mainFrame.page.setText(new String("page" + mainFrame.supTable.curPage + "/" + mainFrame.supTable.flag));
-					mainFrame.repaint();
+					page.setText(new String("page" + supTable.curPage + "/" + supTable.flag));
+					repaint();
 					sel = -1;
 				}
 				sel = table.getSelectedRow();
@@ -236,12 +245,12 @@ public class Load extends JFrame {
 					return;
 				loadFile(new String("견적서_" + manageList.saveListMatch[sel].name + "_" + manageList.saveListMatch[sel].date + "_"
 						+ manageList.saveListMatch[sel].no + ".save"));
-				mainFrame.file.setText(new String("견적서_" + manageList.saveListMatch[sel].name + "_" + manageList.saveListMatch[sel].date
+				file.setText(new String("견적서_" + manageList.saveListMatch[sel].name + "_" + manageList.saveListMatch[sel].date
 						+ "_" + manageList.saveListMatch[sel].no));
-				mainFrame.file.setBounds(419 - mainFrame.file.getText().length() * 5, 5, 300, 20);
+				file.setBounds(419 - file.getText().length() * 5, 5, 300, 20);
 				//setVisible(false);
-				mainFrame.page.setText(new String("page" + mainFrame.supTable.curPage + "/" + mainFrame.supTable.flag));
-				mainFrame.repaint();
+				page.setText(new String("page" + supTable.curPage + "/" + supTable.flag));
+				repaint();
 			}
 		});
 		add(button[0]);
@@ -280,9 +289,9 @@ public class Load extends JFrame {
 	 */
 	public void loadFile(String file) {
 		Est est = null;
-		DemandF demand = new DemandF();
+		DemandF demandF = new DemandF();
 		BufferedReader fr = null;
-		String list[][] = mainFrame.supTable.listC.list;
+		String list[][] = supTable.listC.list;
 		String st;
 		int i = 0, top = 0;
 		try {
@@ -291,31 +300,31 @@ public class Load extends JFrame {
 			st = st.replace("/", "!@#$/");
 			st = st.replace(" ", "");
 			String stn[] = st.split("\\$\\/");
-			demand.date = stn[0].replaceAll("!@#", "");
-			demand.name = stn[1].replaceAll("!@#", "");
-			demand.tel = stn[2].replaceAll("!@#", "");
-			demand.who = stn[3].replaceAll("!@#", "");
-			est = new Est(demand);
+			demandF.date = stn[0].replaceAll("!@#", "");
+			demandF.name = stn[1].replaceAll("!@#", "");
+			demandF.tel = stn[2].replaceAll("!@#", "");
+			demandF.who = stn[3].replaceAll("!@#", "");
+			est = new Est(demandF);
 			est.flag = Integer.parseInt(stn[4].replaceAll("!@#", ""));
 			if (stn.length > 5) {
 				int pos = 5;
-				mainFrame.supTable.table.getColumn("품목").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
-				mainFrame.supTable.table.getColumn("규격").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
-				mainFrame.supTable.table.getColumn("자재비").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
-				mainFrame.supTable.table.getColumn("가공비").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
-				mainFrame.supTable.table.getColumn("수량").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
-				mainFrame.supTable.table.getColumn("단가").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
-				mainFrame.supTable.table.getColumn("공급가액").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
-				mainFrame.supTable.table.getColumn("비고").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
+				supTable.table.getColumn("품목").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
+				supTable.table.getColumn("규격").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
+				supTable.table.getColumn("자재비").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
+				supTable.table.getColumn("가공비").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
+				supTable.table.getColumn("수량").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
+				supTable.table.getColumn("단가").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
+				supTable.table.getColumn("공급가액").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
+				supTable.table.getColumn("비고").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
 			} else {
-				mainFrame.supTable.table.getColumn("품목").setPreferredWidth(Main.tableSize[0]);
-				mainFrame.supTable.table.getColumn("규격").setPreferredWidth(Main.tableSize[1]);
-				mainFrame.supTable.table.getColumn("자재비").setPreferredWidth(Main.tableSize[2]);
-				mainFrame.supTable.table.getColumn("가공비").setPreferredWidth(Main.tableSize[3]);
-				mainFrame.supTable.table.getColumn("수량").setPreferredWidth(Main.tableSize[4]);
-				mainFrame.supTable.table.getColumn("단가").setPreferredWidth(Main.tableSize[5]);
-				mainFrame.supTable.table.getColumn("공급가액").setPreferredWidth(Main.tableSize[6]);
-				mainFrame.supTable.table.getColumn("비고").setPreferredWidth(Main.tableSize[7]);
+				supTable.table.getColumn("품목").setPreferredWidth(Main.tableSize[0]);
+				supTable.table.getColumn("규격").setPreferredWidth(Main.tableSize[1]);
+				supTable.table.getColumn("자재비").setPreferredWidth(Main.tableSize[2]);
+				supTable.table.getColumn("가공비").setPreferredWidth(Main.tableSize[3]);
+				supTable.table.getColumn("수량").setPreferredWidth(Main.tableSize[4]);
+				supTable.table.getColumn("단가").setPreferredWidth(Main.tableSize[5]);
+				supTable.table.getColumn("공급가액").setPreferredWidth(Main.tableSize[6]);
+				supTable.table.getColumn("비고").setPreferredWidth(Main.tableSize[7]);
 			}
 			String tmp = "";
 			while (null != (st = fr.readLine())) {
@@ -329,8 +338,8 @@ public class Load extends JFrame {
 						continue;
 				}
 				if (i == list.length) {
-					mainFrame.supTable.listC.resize();
-					list = mainFrame.supTable.listC.list;
+					supTable.listC.resize();
+					list = supTable.listC.list;
 				}
 				list[i][0] = stn[0].replaceAll("!@#", "");
 				list[i][1] = stn[1].replaceAll("!@#", "");
@@ -344,22 +353,22 @@ public class Load extends JFrame {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		mainFrame.supTable.flag = est.flag;
-		mainFrame.supTable.curPage = 1;
-		mainFrame.card.first(mainFrame.currPane);
-		mainFrame.supTable.listC.listRe(mainFrame.supTable.table);
-		mainFrame.supTable.valueChangedSet(mainFrame.supTable.table, mainFrame.supTable.Row);
-		mainFrame.demand.setDemand(est.demand);
+		supTable.flag = est.flag;
+		supTable.curPage = 1;
+		//cardlayout.first(masterPane);
+		supTable.listC.listRe(supTable.table);
+		supTable.valueChangedSet(supTable.table, supTable.Row);
+		demand.setDemand(est.demand);
 	}
 
 	/*
-	 * public void addSaveList(DemandF demand, int sumDatas, int number) { loadList(); File a = new
+	 * public void addSaveList(DemandF demandF, int sumDatas, int number) { loadList(); File a = new
 	 * File("save"); if (a.exists() == false) { a.mkdirs(); } String fileName; fileName = new
 	 * String("save\\saveAll.txt"); try { BufferedWriter fw; fw = new BufferedWriter(new
 	 * FileWriter(fileName)); fw.write((manageList.num+1)+"\r\n"); for (int i = 0; i < manageList.top;
 	 * i++) { fw.write(manageList.saveList[i].date + "/" + manageList.saveList[i].name + "/" +
 	 * manageList.saveList[i].money + "/" + manageList.saveList[i].no + "/"); fw.write("\r\n"); }
-	 * fw.write(demand.date + "/" + demand.name + "/" + sumDatas + " /" + number + " /");
+	 * fw.write(demandF.date + "/" + demandF.name + "/" + sumDatas + " /" + number + " /");
 	 * fw.write("\r\n"); fw.flush();
 	 * 
 	 * fw.close(); } catch (Exception e3) { e3.printStackTrace(); } }

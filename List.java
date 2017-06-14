@@ -224,13 +224,13 @@ public class List {
 					list[i][j] = list[i-1][j];
 					if (supTable.flag == 1) {
 						if (list[i][j] != null && i == supTable.Row) {
-							Main.mainFrame.func.addPage();
-							Main.mainFrame.func.after();
+							//Main.mainFrame.func.addPage();
+							//Main.mainFrame.func.after();
 						}
 					} else {
 						if (list[i][j] != null && i == supTable.Row + supTable.RowMax * (supTable.flag - 1)) {
-							Main.mainFrame.func.addPage();
-							Main.mainFrame.func.after();
+							//Main.mainFrame.func.addPage();
+							//Main.mainFrame.func.after();
 						}
 					}
 				}

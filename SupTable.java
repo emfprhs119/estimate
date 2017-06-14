@@ -23,7 +23,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
-public class SupTable extends JPanel {
+public class SupTable {
 
 	static int Row = 22;
 	static int RowMax = 33;
@@ -31,8 +31,9 @@ public class SupTable extends JPanel {
 	String list[][];
 	MyJTable table;
 	MyJTable tableAdd;
-	JTextField sumT,sumT2,sumF2,sumR2;
-	JLabel sum = new JLabel("합계금액 ");
+	JTextField sumText,sumTextBottom;	//상단 합계,하단 합계
+	JTextField sumLabelField,sumBlankField;	//하단 합계 레이블 필드와 빈칸 필드
+	JLabel sumTextLabel = new JLabel("합계금액 ");
 	int index = 0;
 	int selx = 0, sely = 0;
 	boolean selkey = true;
@@ -47,19 +48,19 @@ public class SupTable extends JPanel {
 	MenuItem addColumn,addColumn2;
 	MenuItem removeColumn,removeColumn2;
 
-	SupTable(JPanel back) {
+	SupTable(JPanel front,JPanel back) {
 		listC = new List(this);
 		list = listC.init();
 
-		sumT = new JTextField(10);
-		sumR2 = new JTextField(10);
-		sumF2 = new JTextField(10);
-		sumT2 = new JTextField(10);
+		sumText = new JTextField(10);
+		sumBlankField = new JTextField(10);
+		sumLabelField = new JTextField(10);
+		sumTextBottom = new JTextField(10);
 	
-		sumT.setEditable(false);
-		sumF2.setEditable(false);
-		sumR2.setEditable(false);
-		sumT2.setEditable(false);
+		sumText.setEditable(false);
+		sumLabelField.setEditable(false);
+		sumBlankField.setEditable(false);
+		sumTextBottom.setEditable(false);
 		Object row[][] = new Object[Row][8];
 		Object rowmax[][] = new Object[RowMax][8];
 
@@ -70,34 +71,37 @@ public class SupTable extends JPanel {
 		table.getTableHeader().setFont(new Font(Main.font, 0, Main.fontSize));
 		tableAdd.getTableHeader().setFont(new Font(Main.font, 0, Main.fontSize));
 		JScrollPane scroll = new JScrollPane(table);
+		
 		scroll.setBackground(Color.WHITE);
 		JScrollPane scrollAdd = new JScrollPane(tableAdd);
 		scrollAdd.setBackground(Color.WHITE);
 		tableSet(table, Row);
 		tableSet(tableAdd, RowMax);
 		scroll.setPreferredSize(new Dimension(720, 538));
+		scroll.setBounds(0, 0, 720, 538);
 		scrollAdd.setPreferredSize(new Dimension(720, 814));
+		scrollAdd.setBounds(0, 0, 720, 814);
 
-		sum.setBounds(15, 260, 400, 25);
-		sum.setFont(new Font(Main.font, Font.BOLD, 25));
-		sumT.setFont(new Font(Main.font, Font.BOLD, 25));
-		sumT.setHorizontalAlignment(JTextField.RIGHT);
-		sumT.setBackground(Main.color);
-		sumT.setBounds(130, 255, 220, 35);
+		sumTextLabel.setBounds(15, 260, 400, 25);
+		sumTextLabel.setFont(new Font(Main.font, Font.BOLD, 25));
+		sumText.setFont(new Font(Main.font, Font.BOLD, 25));
+		sumText.setHorizontalAlignment(JTextField.RIGHT);
+		sumText.setBackground(Main.color);
+		sumText.setBounds(130, 255, 220, 35);
 		
-		sumR2.setBackground(Color.white);
-		sumR2.setBounds(18+32, 830+31, 719, 35);
+		sumBlankField.setBackground(Color.white);
+		sumBlankField.setBounds(18+32, 830+31, 719, 35);
 		
-		sumF2.setText("합계");
-		sumF2.setFont(new Font(Main.font, Font.BOLD, Main.fontSize/2*3));
-		sumF2.setHorizontalAlignment(JTextField.CENTER);
-		sumF2.setBackground(Color.white);
-		sumF2.setBounds(18+32,830+31,301, 35);
+		sumLabelField.setText("합계");
+		sumLabelField.setFont(new Font(Main.font, Font.BOLD, Main.fontSize/2*3));
+		sumLabelField.setHorizontalAlignment(JTextField.CENTER);
+		sumLabelField.setBackground(Color.white);
+		sumLabelField.setBounds(18+32,830+31,301, 35);
 		
-		sumT2.setFont(new Font(Main.font, Font.BOLD,  Main.fontSize));
-		sumT2.setHorizontalAlignment(JTextField.RIGHT);
-		sumT2.setBackground(Main.color);
-		sumT2.setBounds(607+32,830+31,87, 35);
+		sumTextBottom.setFont(new Font(Main.font, Font.BOLD,  Main.fontSize));
+		sumTextBottom.setHorizontalAlignment(JTextField.RIGHT);
+		sumTextBottom.setBackground(Main.color);
+		sumTextBottom.setBounds(607+32,830+31,87, 35);
 		addColumn = new MenuItem("행 추가");
 		removeColumn = new MenuItem("행 제거");
 		addColumn.addActionListener(new ActionListener() {
@@ -135,9 +139,11 @@ public class SupTable extends JPanel {
 		popup.add(removeColumn);
 		popup2.add(addColumn2);
 		popup2.add(removeColumn2);
-		add(scroll);
+		
+		
+		front.add(scroll);
 		back.add(scrollAdd);
-		this.setBackground(Color.WHITE);
+		setPopup(front,back);
 
 		valueChangedSet(table, Row);
 	}
@@ -255,11 +261,11 @@ public class SupTable extends JPanel {
 		}
 
 		if (toNumFormat(sumDatas) == null) {
-			sumT.setText(toNumFormat(temp) + "원");
-			sumT2.setText(toNumFormat(temp));
+			sumText.setText(toNumFormat(temp) + "원");
+			sumTextBottom.setText(toNumFormat(temp));
 		} else {
-			sumT.setText(toNumFormat(sumDatas) + "원");
-			sumT2.setText(toNumFormat(sumDatas));
+			sumText.setText(toNumFormat(sumDatas) + "원");
+			sumTextBottom.setText(toNumFormat(sumDatas));
 		}
 		/*
 		if (curPage == flag) {
@@ -305,11 +311,11 @@ public class SupTable extends JPanel {
 		table.getColumn("비고").setPreferredWidth(Integer.parseInt(stn[pos++]));
 	}
 
-	public void setPopup(SupTable supTable, JPanel paneAdd) {
-		supTable.add(popup);
-		paneAdd.add(popup2);
-			table.addMouseListener(new MouseLis(supTable, table, popup));
-			tableAdd.addMouseListener(new MouseLis(paneAdd,tableAdd, popup2));
+	public void setPopup(JPanel front, JPanel back) {
+		front.add(popup);
+		back.add(popup2);
+			table.addMouseListener(new MouseLis(front, table, popup));
+			tableAdd.addMouseListener(new MouseLis(back,tableAdd, popup2));
 	}
 	public JTable tableSet(final MyJTable table, final int rowMax) {
 		table.getColumn("품목").setPreferredWidth(Main.tableSize[0]);

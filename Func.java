@@ -1,27 +1,38 @@
+import java.awt.CardLayout;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 public class Func {
 	Supply supply;
 	Demand demand;
 	SupTable supTable;
-	MainFrame mainFrame;
+	JPanel masterPane;
+	CardLayout cardLayout;
+	JLabel file;
+	JLabel page;
 	Load load;
 	PdfSave pdfSave;
 
-	public Func(MainFrame mainFrame, Supply supply, Demand demand, SupTable supTable) {
-		this.mainFrame = mainFrame;
+	public Func(Supply supply, Demand demand, WhitePanel masterPane, SupTable supTable, CardLayout cardLayout,JLabel file,JLabel page) {
 		this.supply = supply;
 		this.demand = demand;
+		this.masterPane=masterPane;
 		this.supTable = supTable;
+		this.cardLayout=cardLayout;
+		this.file=file;
+		this.page=page;
+		demand.setFunc(this);
 		pdfSave = new PdfSave();
-		load = new Load(mainFrame);
+		load = new Load(supTable,demand,file,page);
 	}
 
 	void pdfSave() {
@@ -31,7 +42,7 @@ public class Func {
 
 	String save() {
 		
-		DemandF demand = mainFrame.demand.getDemand();
+		DemandF demand = this.demand.getDemand();
 		addDemand(demand);
 		if (supTable.curPage == 1) {
 			supTable.listC.saveList(supTable.table, supTable.index, supTable.Row);
@@ -45,8 +56,8 @@ public class Func {
 		int number = 0;
 		String fileName, temp;
 		//새 파일이 아니면 무조건 저장  그러므로 다른이름으로 저장같은거 없음.
-		if (!mainFrame.file.getText().equals("New Document")) {
-			fileName = new String("save\\" + mainFrame.file.getText() + ".save");
+		if (!file.getText().equals("New Document")) {
+			fileName = new String("save\\" + file.getText() + ".save");
 			a = new File(fileName);
 			a.delete();
 		}
@@ -73,7 +84,7 @@ public class Func {
 			supTable.table.getColumn("공급가액").getPreferredWidth()+"/"+
 			supTable.table.getColumn("비고").getPreferredWidth());
 			fw.write("\r\n");
-			for (int i = 0; i < mainFrame.supTable.listC.maxSize; i++) {
+			for (int i = 0; i < supTable.listC.maxSize; i++) {
 				for (int j = 0; j < 6; j++) {
 
 					if (supTable.list[i][j] != null && !supTable.list[i][j].equals("")&&!supTable.list[i][j].equals("\r\n") 
@@ -86,8 +97,8 @@ public class Func {
 			}
 			fileName = fileName.replace("save\\", "");
 			fileName = fileName.replace(".save", "");
-			mainFrame.file.setText(fileName);
-			mainFrame.file.setBounds(419 - mainFrame.file.getText().length() * 5, 5, 300, 20);
+			file.setText(fileName);
+			file.setBounds(419 - file.getText().length() * 5, 5, 300, 20);
 			fw.flush();
 			fw.close();
 		} catch (Exception e3) {
@@ -343,14 +354,14 @@ public class Func {
 
 	void after() {
 		if (supTable.curPage == 1) {
-			mainFrame.card.first(mainFrame.currPane);
+			cardLayout.first(masterPane);
 			supTable.valueChangedSet(supTable.table, supTable.Row);
 		} else {
-			mainFrame.card.last(mainFrame.currPane);
+			cardLayout.last(masterPane);
 			supTable.valueChangedSet(supTable.tableAdd, supTable.RowMax);
 		}
-		mainFrame.page.setText(new String("page" + supTable.curPage + "/" + supTable.flag));
-		mainFrame.repaint();
+		page.setText(new String("page" + supTable.curPage + "/" + supTable.flag));
+		//repaint();
 	}
 
 	public BufferedImage createComponentCapture(Component comp) {

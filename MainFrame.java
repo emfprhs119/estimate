@@ -3,6 +3,7 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
@@ -10,98 +11,88 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Scanner;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 class MainFrame extends JFrame {
-	Est est;
-	Func func;
-	ActionButton action;
-	Container contentPane;
-	ContainerRect contentsPane;
-	ContainerRect contentAddPane;
-	MyPanel paneName, supplyPane, demandPane, backG, currPane;
-	JLabel name, file;
-	JLabel page;
-	JPanel paneAdd;
-	Demand demand;
-	SupTable supTable;
-	public static int curPage, flag;
-	CardLayout card = new CardLayout();
-	String displayFont, tableFont;
-	int tableFontSize;
-	Button button[] = new Button[9];
-
-	public MainFrame() {
-		super("견적서");
+	private Container contentPane;
+	private Func func;
+	protected void frameInit(){
+		super.frameInit();
 		setBounds(200, 0, 838, 1045);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		// setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBackground(Color.WHITE);
 		contentPane = this.getContentPane();
 		contentPane.setLayout(null);
-
-		buttonInit();
-		nameInit();
-		contentsPane = new ContainerRect();
-		contentAddPane = new ContainerRect();
-		// contentsPane.setBounds(32, 30, 800, 1000);
-		// contentAddPane.setBounds(32, 10000, 800, 1000);
-
-		backG = new MyPanel();
-		currPane = new MyPanel();
-		currPane.setLayout(card);
-		currPane.setBounds(32, 30, 800, 1000);
-
-		Supply supply = new Supply();
-
-		demand = new Demand();
-		paneAdd = new JPanel();
-		paneAdd.setBackground(Color.WHITE);
-		supTable = new SupTable(paneAdd);
-		Scanner scan;
-		String str = null;
-		func = new Func(this, supply, demand, supTable);
-		action.func = func;
-		demand.setFunc(func);
-
-		backG.setBounds(0, 0, 2000, 2000);
-		supTable.setBounds(18, 290, 720, 635);
-		paneAdd.setBounds(18, 37, 720, 840);
+		contentPane.setBackground(Color.WHITE);
+	}
+	public MainFrame() {
+		super("견적서");
+		Supply supply;
+		Demand demand;
+		SupTable supTable;
+		CardLayout cardlayout;
+		
+		//이름,파일,페이지 레이블 초기화
+		JLabel name=nameInit();
+		JLabel file=fileInit();
+		JLabel page=pageInit();
+		
+		WhitePanel masterPane = new WhitePanel();			//전후면 포함 패널
+		WhiteRectPanel frontPanel= new WhiteRectPanel();	//전면 패널
+		WhiteRectPanel backPanel = new WhiteRectPanel();	//후면 패널
+		
+		supply = new Supply();	//공급자
+		demand = new Demand();	//수요자
+		
+		WhitePanel frontTablePane = new WhitePanel();	//전면 테이블 패널
+		WhitePanel backTablePane = new WhitePanel();	//후면 테이블 패널
+		
+		supTable = new SupTable(frontTablePane,backTablePane);	//테이블
+		
+		//레이아웃 조정
+		cardlayout=new CardLayout();
+		masterPane.setLayout(cardlayout);
+		masterPane.setBounds(32, 30, 800, 1000);
+		frontTablePane.setBounds(18, 290, 720, 635);
+		backTablePane.setBounds(18, 37, 720, 840);
 		supply.setBounds(358, 90, 500, 200);
 		demand.setBounds(0, 124, 350, 290);
-
-		contentsPane.add(supTable.sum);
-		contentsPane.add(supTable.sumT);
-		/*contentsPane.add(supTable.sumF2);
-		contentsPane.add(supTable.sumT2);
-		contentsPane.add(supTable.sumR2);*/
-		contentsPane.add(supTable);// 테이블
-		contentsPane.add(demand);// 수요자
-		contentsPane.add(supply);// 공급자
-		contentsPane.add(paneName);// 견적서 텍스트
-
-		contentAddPane.add(paneAdd);// 2장 이후 테이블
-
-		supTable.setPopup(supTable,paneAdd);
 		
-		add(supTable.sumF2);
-		add(supTable.sumT2);
-		add(supTable.sumR2);
-
-		currPane.add(contentsPane);
-		currPane.add(contentAddPane);
-
+		//function 클래스 생성
+		func = new Func(supply, demand, masterPane,supTable,cardlayout,file,page);
+		
+		//-----전면 패널-------------------------------
+		frontPanel.add(supTable.sumTextLabel);	//전면에만 있는 합계금액 레이블
+		frontPanel.add(supTable.sumText);	//전면에만 있는 합계금액
+		frontPanel.add(frontTablePane);// 전면테이블
+		frontPanel.add(demand);// 수요자
+		frontPanel.add(supply);// 공급자
+		frontPanel.add(name);// 견적서 텍스트
+		//-----후면 패널-------------------------------
+		backPanel.add(backTablePane);// 후면 테이블
+		//-----마스터 패널------------------------------
+		masterPane.add(frontPanel);
+		masterPane.add(backPanel);
+		//-----프레임 컨테이너--------------------------
+		//하단 합계 추가
+		contentPane.add(supTable.sumTextBottom);
+		contentPane.add(supTable.sumLabelField);
+		contentPane.add(supTable.sumBlankField);
+		//버튼 추가
+		addButton(contentPane,func);
+		//파일명,페이지명 레이블 추가
 		contentPane.add(file);
 		contentPane.add(page);
-		contentPane.add(currPane);
-		// contentPane.add(contentAddPane);
-		add(backG);
-		menuLayout();
+		//------------------------------------------
+		contentPane.add(masterPane);
+		
+		//메뉴바
+		menubarLayout();
+		
+		//창 닫기시 변경내용 저장여부 확인
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				if (Main.modify) {
@@ -121,11 +112,27 @@ class MainFrame extends JFrame {
 			}
 		});
 		setVisible(true);
-
 	}
-
-	private void menuLayout() {
-		ManuAction menuAction = new ManuAction();
+	private JLabel nameInit() {
+		JLabel name = new JLabel("견적서");
+		name.setFont(new Font(Main.font, Font.BOLD, 60));
+		name.setBounds(283, 0, 270, 100);
+		return name;
+	}
+	private JLabel fileInit() {
+		JLabel file = new JLabel("New Document");
+		file.setFont(new Font(Main.font, Font.BOLD, 15));
+		file.setBounds(419 - file.getText().length() * 6, 5, 300, 20);
+		return file;
+	}
+	private JLabel pageInit() {
+		JLabel page = new JLabel("page1/1");
+		page.setFont(new Font("돋움", 0, 15));
+		page.setBounds(43, 30, 80, 30);
+		return page;
+	}
+	private void menubarLayout() {
+		ManuAction menuAction = new ManuAction(func);
 		MenuBar menuBar = new MenuBar(); // 메뉴바
 		Menu mnuFile = new Menu("파일"); // 주메뉴
 		MenuItem mnuNew = new MenuItem("새 견적서"); // 부메뉴..
@@ -179,7 +186,10 @@ class MainFrame extends JFrame {
 	}
 
 	class ManuAction implements ActionListener {
-
+		Func func;
+		ManuAction(Func func){
+			this.func=func;
+		}
 		public void actionPerformed(ActionEvent e) {
 			String str = ((MenuItem) e.getSource()).getLabel();
 			switch (str) {
@@ -222,6 +232,7 @@ class MainFrame extends JFrame {
 				func.sort();
 				break;
 			default:
+				/*
 				if (((Menu) ((MenuItem) e.getSource()).getParent()).getLabel().equals("화면 글꼴")) {
 					displayFont = str;
 					setDisplayFont();
@@ -232,42 +243,15 @@ class MainFrame extends JFrame {
 					tableFontSize = Integer.parseInt(str);
 					setTableFont(tableFont, tableFontSize);
 				}
+				*/
 			}
 			func.after();
 		}
 	}
 
-	public void setDisplayFont() {
-		name.setFont(new Font(displayFont, 0, 60));
-		file.setFont(new Font(displayFont, 0, 15));
-		contentsPane.repaint();
-		repaint();
-	}
-
-	public void setTableFont(String font, int size) {
-		supTable.setFont(font, size);
-		contentsPane.repaint();
-		repaint();
-	}
-
-	public void nameInit() {
-		name = new JLabel("견적서");
-		name.setFont(new Font(Main.font, Font.BOLD, 60));
-		name.setBounds(275, 0, 270, 100);
-		file = new JLabel("New Document");
-		file.setFont(new Font(Main.font, Font.BOLD, 15));
-		file.setBounds(419 - file.getText().length() * 6, 5, 300, 20);
-		page = new JLabel("page1/1");
-		page.setFont(new Font("돋움", 0, 15));
-		page.setBounds(43, 30, 80, 30);
-		paneName = new MyPanel();
-		paneName.setBounds(8, 0, 500, 290);
-		paneName.add(name);
-	}
-
-	public void buttonInit() {
-		action = new ActionButton();
-
+	public void addButton(Container container,Func func) {
+		Button button[] = new Button[7];
+		ActionButton action = new ActionButton(func);
 		button[0] = new Button("내보내기");
 		button[0].setBounds(620, 925, 140, 45);
 		button[1] = new Button("저장");
@@ -282,27 +266,37 @@ class MainFrame extends JFrame {
 		button[5].setBounds(230, 925, 70, 20);
 		button[6] = new Button("제거");
 		button[6].setBounds(230, 925 + 30, 70, 20);
-		/*
-		 * button[7] = new Button("정렬"); button[7].setBounds(5, 330, 35, 27); button[8] = new
-		 * Button("목록"); button[8].setBounds(5, 190, 35, 27);
-		 */
 		for (int i = 0; i < 7; i++) {
 			button[i].setFont(new Font(Main.font, Font.BOLD, 25));
 			button[i].setVisible(true);
 			button[i].addActionListener(action);
-			add(button[i]);
-			// Adding ActionListener on the Button
+			container.add(button[i]);
 		}
-		/*
-		 * button[7].setFont(new Font(Main.font, Font.BOLD, 15)); button[8].setFont(new Font(Main.font,
-		 * Font.BOLD, 15));
-		 */
 	}
+	
+	/*
+	public void setDisplayFont() {
+		name.setFont(new Font(displayFont, 0, 60));
+		file.setFont(new Font(displayFont, 0, 15));
+		frontPanel.repaint();
+		repaint();
+	}
+
+	public void setTableFont(String font, int size) {
+		supTable.setFont(font, size);
+		frontPanel.repaint();
+		repaint();
+	}
+*/
+	
+
 }
 
 class ActionButton implements ActionListener {
 	Func func;
-
+	ActionButton(Func func){
+		this.func=func;
+	}
 	public void actionPerformed(ActionEvent e) {
 		if (((Button) e.getSource()).getLabel().equals("저장")) {
 			func.save();
@@ -335,3 +329,23 @@ class ActionButton implements ActionListener {
 
 	}
 }
+
+//배경이 하얀색이고 layout이 null인 Container 외곽선 draw
+class WhiteRectPanel extends WhitePanel {
+	private static final long serialVersionUID = 6805380713240246261L;
+	public void paint(Graphics g) {
+		super.paint(g);
+		g.drawRect(0, 0, 755,875);
+	}
+	
+}
+
+//배경이 하얀색이고 layout이 null인 panel
+class WhitePanel extends JPanel {
+	private static final long serialVersionUID = 5640668174921441140L;
+	WhitePanel(){
+		setBackground(Color.WHITE);
+		setLayout(null);
+	}
+}
+
