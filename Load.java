@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -35,7 +36,7 @@ public class Load extends JFrame {
 	JTable table;
 	JPanel panel;
 	
-	SupTable supTable;
+	SupplyTable supplyTable;
 	Demand demand;
 	JLabel file;
 	JLabel page;
@@ -59,8 +60,8 @@ public class Load extends JFrame {
 	JDatePanelImpl datePanel2 = new JDatePanelImpl(model2, new Properties());
 	JDatePickerImpl datePicker2 = new JDatePickerImpl(datePanel2, new DateFormatter());
 
-	Load(SupTable subTable,Demand demand,JLabel file,JLabel page) {
-		this.supTable=subTable;
+	Load(SupplyTable subTable,Demand demand,JLabel file,JLabel page) {
+		this.supplyTable=subTable;
 		this.demand=demand;
 		this.file=file;
 		this.page=page;
@@ -71,7 +72,7 @@ public class Load extends JFrame {
 		panel = new JPanel();
 		setBounds(200+838, 200, 350, 700);
 		setLayout(null);
-		setDefaultCloseOperation(this.HIDE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 		searchInit();
 		buttonInit();
 
@@ -127,7 +128,7 @@ public class Load extends JFrame {
 					file.setBounds(419 - file.getText().length() * 5, 5, 300, 20);
 					//setVisible(false);
 					Main.modify = false;
-					page.setText(new String("page" + supTable.curPage + "/" + supTable.flag));
+					page.setText(new String("page" + SupplyTable.currPage + "/" + SupplyTable.maxPage));
 					repaint();
 					sel = -1;
 				}
@@ -249,7 +250,7 @@ public class Load extends JFrame {
 						+ "_" + manageList.saveListMatch[sel].no));
 				file.setBounds(419 - file.getText().length() * 5, 5, 300, 20);
 				//setVisible(false);
-				page.setText(new String("page" + supTable.curPage + "/" + supTable.flag));
+				page.setText(new String("page" + SupplyTable.currPage + "/" + SupplyTable.maxPage));
 				repaint();
 			}
 		});
@@ -291,7 +292,7 @@ public class Load extends JFrame {
 		Est est = null;
 		DemandF demandF = new DemandF();
 		BufferedReader fr = null;
-		String list[][] = supTable.listC.list;
+		String list[][] = supplyTable.tableList.strList;
 		String st;
 		int i = 0, top = 0;
 		try {
@@ -305,26 +306,26 @@ public class Load extends JFrame {
 			demandF.tel = stn[2].replaceAll("!@#", "");
 			demandF.who = stn[3].replaceAll("!@#", "");
 			est = new Est(demandF);
-			est.flag = Integer.parseInt(stn[4].replaceAll("!@#", ""));
+			est.maxPage = Integer.parseInt(stn[4].replaceAll("!@#", ""));
 			if (stn.length > 5) {
 				int pos = 5;
-				supTable.table.getColumn("품목").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
-				supTable.table.getColumn("규격").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
-				supTable.table.getColumn("자재비").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
-				supTable.table.getColumn("가공비").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
-				supTable.table.getColumn("수량").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
-				supTable.table.getColumn("단가").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
-				supTable.table.getColumn("공급가액").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
-				supTable.table.getColumn("비고").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
+				supplyTable.frontTable.getColumn("품목").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
+				supplyTable.frontTable.getColumn("규격").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
+				supplyTable.frontTable.getColumn("자재비").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
+				supplyTable.frontTable.getColumn("가공비").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
+				supplyTable.frontTable.getColumn("수량").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
+				supplyTable.frontTable.getColumn("단가").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
+				supplyTable.frontTable.getColumn("공급가액").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
+				supplyTable.frontTable.getColumn("비고").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
 			} else {
-				supTable.table.getColumn("품목").setPreferredWidth(Main.tableSize[0]);
-				supTable.table.getColumn("규격").setPreferredWidth(Main.tableSize[1]);
-				supTable.table.getColumn("자재비").setPreferredWidth(Main.tableSize[2]);
-				supTable.table.getColumn("가공비").setPreferredWidth(Main.tableSize[3]);
-				supTable.table.getColumn("수량").setPreferredWidth(Main.tableSize[4]);
-				supTable.table.getColumn("단가").setPreferredWidth(Main.tableSize[5]);
-				supTable.table.getColumn("공급가액").setPreferredWidth(Main.tableSize[6]);
-				supTable.table.getColumn("비고").setPreferredWidth(Main.tableSize[7]);
+				supplyTable.frontTable.getColumn("품목").setPreferredWidth(Main.tableSize[0]);
+				supplyTable.frontTable.getColumn("규격").setPreferredWidth(Main.tableSize[1]);
+				supplyTable.frontTable.getColumn("자재비").setPreferredWidth(Main.tableSize[2]);
+				supplyTable.frontTable.getColumn("가공비").setPreferredWidth(Main.tableSize[3]);
+				supplyTable.frontTable.getColumn("수량").setPreferredWidth(Main.tableSize[4]);
+				supplyTable.frontTable.getColumn("단가").setPreferredWidth(Main.tableSize[5]);
+				supplyTable.frontTable.getColumn("공급가액").setPreferredWidth(Main.tableSize[6]);
+				supplyTable.frontTable.getColumn("비고").setPreferredWidth(Main.tableSize[7]);
 			}
 			String tmp = "";
 			while (null != (st = fr.readLine())) {
@@ -338,8 +339,8 @@ public class Load extends JFrame {
 						continue;
 				}
 				if (i == list.length) {
-					supTable.listC.resize();
-					list = supTable.listC.list;
+					supplyTable.tableList.resize();
+					list = supplyTable.tableList.strList;
 				}
 				list[i][0] = stn[0].replaceAll("!@#", "");
 				list[i][1] = stn[1].replaceAll("!@#", "");
@@ -353,11 +354,11 @@ public class Load extends JFrame {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		supTable.flag = est.flag;
-		supTable.curPage = 1;
+		supplyTable.maxPage = est.maxPage;
+		SupplyTable.currPage = 1;
 		//cardlayout.first(masterPane);
-		supTable.listC.listRe(supTable.table);
-		supTable.valueChangedSet(supTable.table, supTable.Row);
+		supplyTable.tableList.listRe(supplyTable.frontTable);
+		supplyTable.valueChangedUpdate(supplyTable.frontTable);
 		demand.setDemand(est.demand);
 	}
 

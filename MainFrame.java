@@ -32,7 +32,7 @@ class MainFrame extends JFrame {
 		super("견적서");
 		Supply supply;
 		Demand demand;
-		SupTable supTable;
+		SupplyTable supplyTable;
 		CardLayout cardlayout;
 		
 		//이름,파일,페이지 레이블 초기화
@@ -50,7 +50,7 @@ class MainFrame extends JFrame {
 		WhitePanel frontTablePane = new WhitePanel();	//전면 테이블 패널
 		WhitePanel backTablePane = new WhitePanel();	//후면 테이블 패널
 		
-		supTable = new SupTable(frontTablePane,backTablePane);	//테이블
+		supplyTable = new SupplyTable(frontTablePane,backTablePane);	//테이블
 		
 		//레이아웃 조정
 		cardlayout=new CardLayout();
@@ -62,11 +62,11 @@ class MainFrame extends JFrame {
 		demand.setBounds(0, 124, 350, 290);
 		
 		//function 클래스 생성
-		func = new Func(supply, demand, masterPane,supTable,cardlayout,file,page);
+		func = new Func(supply, demand, masterPane,supplyTable,cardlayout,file,page);
 		
 		//-----전면 패널-------------------------------
-		frontPanel.add(supTable.sumTextLabel);	//전면에만 있는 합계금액 레이블
-		frontPanel.add(supTable.sumText);	//전면에만 있는 합계금액
+		frontPanel.add(supplyTable.sumTextLabel);	//전면에만 있는 합계금액 레이블
+		frontPanel.add(supplyTable.sumText);	//전면에만 있는 합계금액
 		frontPanel.add(frontTablePane);// 전면테이블
 		frontPanel.add(demand);// 수요자
 		frontPanel.add(supply);// 공급자
@@ -78,9 +78,9 @@ class MainFrame extends JFrame {
 		masterPane.add(backPanel);
 		//-----프레임 컨테이너--------------------------
 		//하단 합계 추가
-		contentPane.add(supTable.sumTextBottom);
-		contentPane.add(supTable.sumLabelField);
-		contentPane.add(supTable.sumBlankField);
+		contentPane.add(supplyTable.sumTextBottom);
+		contentPane.add(supplyTable.sumLabelField);
+		contentPane.add(supplyTable.sumBlankField);
 		//버튼 추가
 		addButton(contentPane,func);
 		//파일명,페이지명 레이블 추가
@@ -184,7 +184,31 @@ class MainFrame extends JFrame {
 
 		this.setMenuBar(menuBar); // frame에 메뉴바 등록
 	}
-
+	
+	private void addButton(Container container,Func func) {
+		Button button[] = new Button[7];
+		ActionButton action = new ActionButton(func);
+		button[0] = new Button("내보내기");
+		button[0].setBounds(620, 925, 140, 45);
+		button[1] = new Button("저장");
+		button[1].setBounds(480, 925, 120, 45);
+		button[2] = new Button("불러오기");
+		button[2].setBounds(310, 925, 150, 45);
+		button[3] = new Button("◀");
+		button[3].setBounds(60, 925, 70, 45);
+		button[4] = new Button("▶");
+		button[4].setBounds(150, 925, 70, 45);
+		button[5] = new Button("추가");
+		button[5].setBounds(230, 925, 70, 20);
+		button[6] = new Button("제거");
+		button[6].setBounds(230, 925 + 30, 70, 20);
+		for (int i = 0; i < 7; i++) {
+			button[i].setFont(new Font(Main.font, Font.BOLD, 25));
+			button[i].setVisible(true);
+			button[i].addActionListener(action);
+			container.add(button[i]);
+		}
+	}
 	class ManuAction implements ActionListener {
 		Func func;
 		ManuAction(Func func){
@@ -249,30 +273,7 @@ class MainFrame extends JFrame {
 		}
 	}
 
-	public void addButton(Container container,Func func) {
-		Button button[] = new Button[7];
-		ActionButton action = new ActionButton(func);
-		button[0] = new Button("내보내기");
-		button[0].setBounds(620, 925, 140, 45);
-		button[1] = new Button("저장");
-		button[1].setBounds(480, 925, 120, 45);
-		button[2] = new Button("불러오기");
-		button[2].setBounds(310, 925, 150, 45);
-		button[3] = new Button("◀");
-		button[3].setBounds(60, 925, 70, 45);
-		button[4] = new Button("▶");
-		button[4].setBounds(150, 925, 70, 45);
-		button[5] = new Button("추가");
-		button[5].setBounds(230, 925, 70, 20);
-		button[6] = new Button("제거");
-		button[6].setBounds(230, 925 + 30, 70, 20);
-		for (int i = 0; i < 7; i++) {
-			button[i].setFont(new Font(Main.font, Font.BOLD, 25));
-			button[i].setVisible(true);
-			button[i].addActionListener(action);
-			container.add(button[i]);
-		}
-	}
+	
 	
 	/*
 	public void setDisplayFont() {
