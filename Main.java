@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.Scanner;
 
 
@@ -17,7 +18,6 @@ public class Main {
 		Scanner scan;
 		modify=false;
 		try {
-			//initialize font,fontSize and tableSize data
 			scan=new Scanner(new File("config.ini"));
 			font=scan.next();
 			fontSize=scan.nextInt();
@@ -45,6 +45,37 @@ public class Main {
 				e.printStackTrace();
 			}
 		}
-		mainFrame = new MainFrame();
+		mainFrame = new MainFrame(new Estimate());
+	}
+	
+	public static String toNumFormat(long num) {
+		if (num == 0)
+			return "0";
+		DecimalFormat df = new DecimalFormat("#,###");
+		return df.format(num);
+	}
+
+	static public String toStrFormat(Object object) {
+		if (object == null)
+			return null;
+		String num = (String) object;
+		num = num.replaceAll("[^-0-9]", "");
+		if (num.matches("^[0-9\\-]+")) {
+			return num;
+		} else {
+			return null;
+		}
+	}
+
+	static public long toLongFormat(Object obj) {
+		if (obj == null)
+			return 0;
+		String num = (String) obj;
+		num = num.replaceAll("[^-0-9]", "");
+		if (num.matches("^[0-9\\-]+")) {
+			return Long.parseLong(num);
+		} else {
+			return 0;
+		}
 	}
 }

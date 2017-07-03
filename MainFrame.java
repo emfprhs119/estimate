@@ -28,11 +28,12 @@ class MainFrame extends JFrame {
 		contentPane.setLayout(null);
 		contentPane.setBackground(Color.WHITE);
 	}
-	public MainFrame() {
+	public MainFrame(Estimate est) {
 		super("견적서");
-		Supply supply;
-		Demand demand;
-		SupplyTable supplyTable;
+		
+		DemandView demandView;
+		SupplyView supplyView;
+		ProductView productView;
 		CardLayout cardlayout;
 		
 		//이름,파일,페이지 레이블 초기화
@@ -44,13 +45,13 @@ class MainFrame extends JFrame {
 		WhiteRectPanel frontPanel= new WhiteRectPanel();	//전면 패널
 		WhiteRectPanel backPanel = new WhiteRectPanel();	//후면 패널
 		
-		supply = new Supply();	//공급자
-		demand = new Demand();	//수요자
 		
 		WhitePanel frontTablePane = new WhitePanel();	//전면 테이블 패널
 		WhitePanel backTablePane = new WhitePanel();	//후면 테이블 패널
 		
-		supplyTable = new SupplyTable(frontTablePane,backTablePane);	//테이블
+		demandView = new DemandView(est.demand);
+		supplyView = new SupplyView(est.supply);
+		productView = new ProductView(est.productList,frontTablePane,backTablePane);
 		
 		//레이아웃 조정
 		cardlayout=new CardLayout();
@@ -58,18 +59,16 @@ class MainFrame extends JFrame {
 		masterPane.setBounds(32, 30, 800, 1000);
 		frontTablePane.setBounds(18, 290, 720, 635);
 		backTablePane.setBounds(18, 37, 720, 840);
-		supply.setBounds(358, 90, 500, 200);
-		demand.setBounds(0, 124, 350, 290);
 		
 		//function 클래스 생성
-		func = new Func(supply, demand, masterPane,supplyTable,cardlayout,file,page);
+		//func = new Func(supply, demand, masterPane,supplyTable,cardlayout,file,page);
 		
 		//-----전면 패널-------------------------------
-		frontPanel.add(supplyTable.sumTextLabel);	//전면에만 있는 합계금액 레이블
-		frontPanel.add(supplyTable.sumText);	//전면에만 있는 합계금액
+		frontPanel.add(productView.sumTextLabel);	//전면에만 있는 합계금액 레이블
+		frontPanel.add(productView.sumText);	//전면에만 있는 합계금액
 		frontPanel.add(frontTablePane);// 전면테이블
-		frontPanel.add(demand);// 수요자
-		frontPanel.add(supply);// 공급자
+		frontPanel.add(demandView);// 수요자
+		frontPanel.add(supplyView);// 공급자
 		frontPanel.add(name);// 견적서 텍스트
 		//-----후면 패널-------------------------------
 		backPanel.add(backTablePane);// 후면 테이블
@@ -78,9 +77,9 @@ class MainFrame extends JFrame {
 		masterPane.add(backPanel);
 		//-----프레임 컨테이너--------------------------
 		//하단 합계 추가
-		contentPane.add(supplyTable.sumTextBottom);
-		contentPane.add(supplyTable.sumLabelField);
-		contentPane.add(supplyTable.sumBlankField);
+		contentPane.add(productView.sumTextBottom);
+		contentPane.add(productView.sumLabelField);
+		contentPane.add(productView.sumBlankField);
 		//버튼 추가
 		addButton(contentPane,func);
 		//파일명,페이지명 레이블 추가
@@ -100,7 +99,7 @@ class MainFrame extends JFrame {
 							JOptionPane.INFORMATION_MESSAGE);
 					switch (choice) {
 					case 0:
-						func.save();
+						func.dataSave();
 						System.exit(0);
 					case 1:
 						System.exit(0);
@@ -161,23 +160,6 @@ class MainFrame extends JFrame {
 		mnuGetDemend.addActionListener(menuAction);
 		mnuTableSort.addActionListener(menuAction);
 		mnuModif.add(mnuGetDemend);
-		//mnuModif.add(mnuTableSort);
-		
-		/*
-		 * Menu mnuFont = new Menu("서식"); Menu mnuViewFont = new Menu("화면 글꼴"); Menu mnuTableFont = new
-		 * Menu("테이블 글꼴"); Menu mnuTableFontSize = new Menu("테이블 글꼴 크기");
-		 * 
-		 * GraphicsEnvironment ge = null; ge = GraphicsEnvironment.getLocalGraphicsEnvironment(); Font[]
-		 * fonts = ge.getAllFonts(); String fontName; MenuItem item;
-		 * 
-		 * for(int i=0; i<fonts.length;i++){ if(fonts[i].canDisplay('한')){ item = new
-		 * MenuItem(fonts[i].getFontName()); item.addActionListener(menuAction); mnuViewFont.add(item);
-		 * item = new MenuItem(fonts[i].getFontName()); item.addActionListener(menuAction);
-		 * mnuTableFont.add(item); } } for(int i=10; i<31;i++){ item = new MenuItem(String.valueOf(i));
-		 * item.addActionListener(menuAction); mnuTableFontSize.add(item);
-		 * 
-		 * } mnuFont.add(mnuViewFont); mnuFont.add(mnuTableFont); mnuFont.add(mnuTableFontSize);
-		 */
 		menuBar.add(mnuFile); // 메뉴바에 주메뉴 등록
 		menuBar.add(mnuModif); // 메뉴바에 주메뉴 등록
 		// menuBar.add(mnuFont); // 메뉴바에 주메뉴 등록
@@ -223,18 +205,18 @@ class MainFrame extends JFrame {
 							JOptionPane.INFORMATION_MESSAGE);
 					switch (choice) {
 					case 0:
-						func.save();
-						new MainFrame();
+						func.dataSave();
+						new MainFrame(new Estimate());
 						setVisible(false);
 					case 1:
-						new MainFrame();
+						new MainFrame(new Estimate());
 						setVisible(false);
 					case 2:
 					}
 				}
 				else
 				{
-					new MainFrame();
+					new MainFrame(new Estimate());
 					setVisible(false);
 				}
 				break;
@@ -242,7 +224,7 @@ class MainFrame extends JFrame {
 				func.load();
 				break;
 			case "저장하기":
-				func.save();
+				func.dataSave();
 				break;
 			case "Pdf 내보내기":
 				func.pdfSave();
@@ -252,45 +234,11 @@ class MainFrame extends JFrame {
 			case "거래처 목록 불러오기":
 				func.loadDemand();
 				break;
-			case "테이블 정렬하기":
-				func.sort();
-				break;
 			default:
-				/*
-				if (((Menu) ((MenuItem) e.getSource()).getParent()).getLabel().equals("화면 글꼴")) {
-					displayFont = str;
-					setDisplayFont();
-				} else if (((Menu) ((MenuItem) e.getSource()).getParent()).getLabel().equals("테이블 글꼴")) {
-					tableFont = str;
-					setTableFont(tableFont, tableFontSize);
-				} else if (((Menu) ((MenuItem) e.getSource()).getParent()).getLabel().equals("테이블 글꼴 크기")) {
-					tableFontSize = Integer.parseInt(str);
-					setTableFont(tableFont, tableFontSize);
-				}
-				*/
 			}
 			func.after();
 		}
 	}
-
-	
-	
-	/*
-	public void setDisplayFont() {
-		name.setFont(new Font(displayFont, 0, 60));
-		file.setFont(new Font(displayFont, 0, 15));
-		frontPanel.repaint();
-		repaint();
-	}
-
-	public void setTableFont(String font, int size) {
-		supTable.setFont(font, size);
-		frontPanel.repaint();
-		repaint();
-	}
-*/
-	
-
 }
 
 class ActionButton implements ActionListener {
@@ -300,7 +248,7 @@ class ActionButton implements ActionListener {
 	}
 	public void actionPerformed(ActionEvent e) {
 		if (((Button) e.getSource()).getLabel().equals("저장")) {
-			func.save();
+			func.dataSave();
 		}
 		if (((Button) e.getSource()).getLabel().equals("내보내기")) {
 			func.pdfSave();
@@ -321,7 +269,7 @@ class ActionButton implements ActionListener {
 			func.removePage();
 		}
 		if (((Button) e.getSource()).getLabel().equals("정렬")) {
-			func.sort();
+			//func.sort();
 		}
 		if (((Button) e.getSource()).getLabel().equals("목록")) {
 			func.loadDemand();

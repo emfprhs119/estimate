@@ -23,14 +23,13 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
-public class SupplyTable {
+public class ProductView {
 	static int FrontRow = 22; // Àü¸é ¸®½ºÆ® Çà¼ö
 	static int BackRow = 33; // ÈÄ¸é ¸®½ºÆ® Çà¼ö
 	static int maxPage = 1; // ÀüÃ¼ ÆäÀÌÁö
 	static int currPage = 1; // ÇöÀç ÆäÀÌÁö
 
-	TableList tableList; // Å×ÀÌºí ¸®½ºÆ®
-	String strList[][]; // Å×ÀÌºí ¹®ÀÚ¿­
+	ProductList productList; // »óÇ° ¸®½ºÆ®
 
 	MyJTable frontTable; // Àü¸é Å×ÀÌºí
 	MyJTable backTable; // ÈÄ¸é Å×ÀÌºí
@@ -41,17 +40,14 @@ public class SupplyTable {
 
 	int index = 0; // ÆäÀÌÁöº° Ã¹ Çà À§Ä¡
 	int selx = 0, sely = 0; // ¼±ÅÃÇÑ Çà·Ä
-	int calcData = 0; // °è»êµÈ ÇÕ°è±Ý¾×
+	long calcData = 0; // °è»êµÈ ÇÕ°è±Ý¾×
 	String copyString = null; // º¹»ç ºÙ¿©³Ö±â¸¦ À§ÇÑ ¹®ÀÚ¿­
 
 	// ÆË¾÷ ¸Þ´º - Çà Ãß°¡,Á¦°Å
 
-	SupplyTable(JPanel front, JPanel back) {
-
-		tableList = new TableList(this);
-		strList = tableList.init(); // string ¹è¿­ »ý¼º
+	ProductView(ProductList productList, JPanel front, JPanel back) {
 		sumTextInit();
-
+		this.productList = productList;
 		Object frontRow[][] = new Object[FrontRow][8]; // Àü¸é Å×ÀÌºí Çà·Ä
 		Object backRow[][] = new Object[BackRow][8]; // ÈÄ¸é Å×ÀÌºí Çà·Ä
 		Object column[] = { "Ç°¸ñ", "±Ô°Ý", "ÀÚÀçºñ", "°¡°øºñ", "¼ö·®", "´Ü°¡", "°ø±Þ°¡¾×", "ºñ°í" };
@@ -91,23 +87,28 @@ public class SupplyTable {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			if (((MenuItem) e.getSource()).getLabel() == "Çà Ãß°¡") {
-				tableList.addColumn(table.getSelectedRow());
+			if (((MenuItem) e.getSource()).getLabel() == "Çà Ãß°¡ (shift+a") {
+				//productList.addRow(table.getSelectedRow());
 				tableUpdate(frontTable);
 				tableUpdate(backTable);
-			} else if (((MenuItem) e.getSource()).getLabel() == "Çà Á¦°Å") {
-				tableList.removeColumn(table.getSelectedRow());
+			} else if (((MenuItem) e.getSource()).getLabel() == "Çà Á¦°Å (shift+d)") {
+				//productList.removeRow(table.getSelectedRow());
 				tableUpdate(frontTable);
 				tableUpdate(backTable);
-			} else if (((MenuItem) e.getSource()).getLabel() == "º¹»ç") {
+			} else if (((MenuItem) e.getSource()).getLabel() == "Çà º¹»ç (shift+c)") {
+			} else if (((MenuItem) e.getSource()).getLabel() == "Çà Àß¶ó³»±â (shift+x)") {
+			} else if (((MenuItem) e.getSource()).getLabel() == "Çà ºÙ¿©³Ö±â (shift+v)") {
+			} else if (((MenuItem) e.getSource()).getLabel() == "¼¿ º¹»ç (ctrl+c)") {
 				copyString = (String) table.getValueAt(table.getSelectedRow(), table.getSelectedColumn());
-			} else if (((MenuItem) e.getSource()).getLabel() == "Àß¶ó³»±â") {
+			} else if (((MenuItem) e.getSource()).getLabel() == "¼¿ Àß¶ó³»±â (ctrl+x)") {
 				copyString = (String) table.getValueAt(table.getSelectedRow(), table.getSelectedColumn());
 				table.setValueAt("", table.getSelectedRow(), table.getSelectedColumn());
 				valueChangedUpdate(table);
-			} else if (((MenuItem) e.getSource()).getLabel() == "ºÙ¿©³Ö±â") {
-				if (table.getSelectedColumn() != 5 && table.getSelectedColumn() != 6)
+			} else if (((MenuItem) e.getSource()).getLabel() == "¼¿ ºÙ¿©³Ö±â (ctrl+v)") {
+				if (table.getSelectedColumn() != 5 && table.getSelectedColumn() != 6) {
 					table.setValueAt(copyString, table.getSelectedRow(), table.getSelectedColumn());
+					valueChangedUpdate(table);
+				}
 			}
 		}
 	}
@@ -194,29 +195,24 @@ public class SupplyTable {
 		sumTextBottom.setBackground(Main.color);
 		sumTextBottom.setBounds(639, 861, 87, 35);
 	}
-	
+
 	void tableUpdate(JTable table) {
-		tableList.isFull(index + table.getRowCount());
-		//null·Î Å×ÀÌºí ÃÊ±âÈ­
+		productList.isFull(index + table.getRowCount());
+		// null·Î Å×ÀÌºí ÃÊ±âÈ­
 		for (int i = 0; i < table.getRowCount(); i++) {
 			for (int j = 0; j < table.getColumnCount(); j++) {
 				table.setValueAt(null, i, j);
 			}
 		}
-		//Å×ÀÌºí¿¡ µ¥ÀÌÅÍ ÀÔ·Â
-		for (int i = index; i < index + table.getRowCount(); i++) {
-			for (int j = 0; j < 5; j++) {
-				table.setValueAt(strList[i][j], i - index, j);
-			}
-			table.setValueAt(strList[i][5], i - index, 7);
-		}
+		// Å×ÀÌºí¿¡ µ¥ÀÌÅÍ ÀÔ·Â
+		productList.dataToTable(table, index);
 		valueChangedUpdate(table);
 	}
 
 	protected void valueChangedUpdate(JTable table) {
-		//µ¥ÀÌÅÍ º¯°æ¿¡ µû¸¥ Å×ÀÌºí ¾÷µ¥ÀÌÆ®
-		int sumData = 0;
-		int mulData = 0;
+		// µ¥ÀÌÅÍ º¯°æ¿¡ µû¸¥ Å×ÀÌºí ¾÷µ¥ÀÌÆ®
+		long sumData = 0;
+		long mulData = 0;
 		int max = table.getRowCount();
 		selx = table.getSelectedColumn();
 		sely = table.getSelectedRow();
@@ -232,97 +228,57 @@ public class SupplyTable {
 						table.setValueAt(null, i, j);
 					}
 					if (j >= 2 && j <= 4) {
-						if (toStrFormat(table.getValueAt(i, j)) == null)
+						if (Main.toStrFormat(table.getValueAt(i, j)) == null)
 							table.setValueAt(null, i, j);
 						else {
-							table.setValueAt(toNumFormat(toIntFormat(table.getValueAt(i, j))), i, j);
+							table.setValueAt(Main.toNumFormat(Main.toLongFormat(table.getValueAt(i, j))), i, j);
 							if (j <= 3)
-								sumData += toIntFormat(table.getValueAt(i, j));
+								sumData += Main.toLongFormat(table.getValueAt(i, j));
 							else
-								mulData = sumData * toIntFormat(table.getValueAt(i, j));
+								mulData = sumData * Main.toLongFormat(table.getValueAt(i, j));
 						}
 					}
 				}
 				if (j == 5) {
 					if (sumData != 0)
-						table.setValueAt(toNumFormat(sumData), i, 5);
+						table.setValueAt(Main.toNumFormat(sumData), i, 5);
 					else
 						table.setValueAt(null, i, 5);
 				} else if (j == 6) {
 					if (mulData != 0)
-						table.setValueAt(toNumFormat(mulData), i, 6);
+						table.setValueAt(Main.toNumFormat(mulData), i, 6);
 					else
 						table.setValueAt(null, i, 6);
 				}
 			}
 		}
-		//ÃÑ ±Ý¾× ¾÷µ¥ÀÌÆ®
+		// ÃÑ ±Ý¾× ¾÷µ¥ÀÌÆ®
 		calcSumDataUpdate();
 	}
 
 	void calcSumDataUpdate() {
-		int sumData;
-		int temp = calcData;
 		// µ¥ÀÌÅÍ ¸®½ºÆ®¿¡ Å×ÀÌºí µ¥ÀÌÅÍ ÀúÀå
 		if (currPage == 1) {
-			tableList.saveList(frontTable, 0, FrontRow);
+			productList.tableToData(frontTable, index);
 		} else
-			tableList.saveList(backTable, index, BackRow);
-
+			productList.tableToData(backTable, index);
 		// ÇÕ°è °è»ê
-		calcData = 0;
-		for (int i = 0; i < tableList.maxSize; i++) {
-			sumData = toIntFormat(strList[i][2]) + toIntFormat(strList[i][3]);
-			calcData += sumData * toIntFormat(strList[i][4]);
+		calcData = productList.getSumMoney();
+		if (calcData>999999999999L){
+			sumText.setText("NaN");
+			sumTextBottom.setText("NaN");
+			return;
 		}
-
-		// Å×ÀÌºí¿¡ Àß¸øµÈ µ¥ÀÌÅÍ°¡ ÀÖÀ» °æ¿ì ÀÌÀüµ¥ÀÌÅÍ »ç¿ë
-		if (toNumFormat(calcData) == null) {
-			sumText.setText(toNumFormat(temp) + "¿ø");
-			sumTextBottom.setText(toNumFormat(temp));
-			sumTextBottom.setBounds(639, 861, 87, 35);
-			calcData = temp;
-		} else {
-			// bottomTextField Á¶Àý
-			int len = toNumFormat(temp).length() > 10 ? (toNumFormat(temp).length() - 10) * 10 : 0;
-			sumText.setText(toNumFormat(calcData) + "¿ø");
-			sumTextBottom.setText(toNumFormat(calcData));
-			sumTextBottom.setBounds(639 - len, 861, 87 + len, 35);
-		}
+		// bottomTextField Á¶Àý
+		int len = Main.toNumFormat(calcData).length() > 10 ? (Main.toNumFormat(calcData).length() - 10) * 10 : 0;
+		sumText.setText(Main.toNumFormat(calcData) + "¿ø");
+		sumTextBottom.setText(Main.toNumFormat(calcData));
+		sumTextBottom.setBounds(639 - len, 861, 87 + len, 35);
 	}
 
-	final public static String toNumFormat(int num) {
-		if (num == 0)
-			return "0";
-		DecimalFormat df = new DecimalFormat("#,###");
-		return df.format(num);
-	}
+	
 
-	final static public String toStrFormat(Object object) {
-		if (object == null)
-			return null;
-		String num = (String) object;
-		num = num.replaceAll("[^-0-9]", "");
-		if (num.matches("^[0-9\\-]+")) {
-			return num;
-		} else {
-			return null;
-		}
-	}
-
-	final static public int toIntFormat(Object obj) {
-		if (obj == null)
-			return 0;
-		String num = (String) obj;
-		num = num.replaceAll("[^-0-9]", "");
-		if (num.matches("^[0-9\\-]+")) {
-			return Integer.parseInt(num);
-		} else {
-			return 0;
-		}
-	}
-
-	private JTable tableInit(final MyJTable table) {
+	private void tableInit(final MyJTable table) {
 		// Å×ÀÌºí °¡·ÎÅ©±â
 		table.getColumn("Ç°¸ñ").setPreferredWidth(Main.tableSize[0]);
 		table.getColumn("±Ô°Ý").setPreferredWidth(Main.tableSize[1]);
@@ -367,7 +323,6 @@ public class SupplyTable {
 				if (table.getSelectedColumn() != 5 && table.getSelectedColumn() != 6)
 					table.setValueAt(copyString, table.getSelectedRow(), table.getSelectedColumn());
 			}
-
 			// Å° ¼¼ÆÃ
 			public void keyPressed(KeyEvent e) {
 				if ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0) {
@@ -395,6 +350,7 @@ public class SupplyTable {
 						table.setColumnSelectionInterval(7, 7);
 						table.setRowSelectionInterval(table.getSelectedRow(), table.getSelectedRow());
 					}
+				
 				case KeyEvent.VK_UP:
 				case KeyEvent.VK_DOWN:
 				case KeyEvent.VK_LEFT:
@@ -407,14 +363,15 @@ public class SupplyTable {
 			public void keyTyped(KeyEvent e) {
 				Character c;
 				c = e.getKeyChar();
-				if (c.toString().matches("[^a-zA-Z0-9¤¡-¤¾¤¿-¤Ó°¡-ÆR`~!@#$%^&*()-_=+|{};:',.<>/??]+")) {
+				//Çã¿ë ¹®ÀÚ
+				if (c.toString().matches("[^a-zA-Z0-9¤¡-¤¾¤¿-¤Ó°¡-ÆR`~!@#$%^&*()-_=+|{};:',.<>?]+")) {
 					valueChangedUpdate(table);
 					return;
 				}
-
 				else if (table.isSetCellEditable(table.getSelectedRow(), table.getSelectedColumn())) {
 					keyPressed(e);
 					if (!e.isControlDown()) {
+						
 						String s = (String) table.getValueAt(table.getSelectedRow(), table.getSelectedColumn());
 						if (table.getSelectedColumn() == 5) {
 							table.setColumnSelectionInterval(0, 0);
@@ -428,6 +385,7 @@ public class SupplyTable {
 							s = "";
 						table.setValueAt(s + e.getKeyChar(), table.getSelectedRow(), table.getSelectedColumn());
 						Main.modify = true;
+						
 					}
 				}
 				valueChangedUpdate(table);
@@ -443,7 +401,6 @@ public class SupplyTable {
 				valueChangedUpdate(table);
 			}
 		});
-		return table;
 	}
 
 	// Å×ÀÌºí Å©±â Á¶Á¤ load data

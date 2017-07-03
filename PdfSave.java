@@ -50,74 +50,70 @@ public class PdfSave {
 
 	}
 
-	public void exportPDF(String fName,Supply supply, Demand demand, SupplyTable supplyTable) {
-
+	public void exportPDF(String fName,Estimate est) {
 		Document document = new Document();
 		document.setMargins(45, 45, 45, 45);
+		String path="\\PDF";
 		int curr = 0;
 		try {
-			File a = new File(System.getProperty("user.home")+"\\Desktop\\PDF견적모음");
+			File a = new File(path);
 			if (a.exists() == false) {
 				a.mkdirs();
 			}
-			PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(System.getProperty("user.home")+"\\Desktop\\PDF견적모음\\"+fName+".pdf"));
+			PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(path+"\\"+fName+".pdf"));
 			document.open();
 			Paragraph 견적서 = new Paragraph("견적서", formFont);
 			견적서.setAlignment(Element.ALIGN_CENTER);
 			견적서.setSpacingAfter(27f);
 			document.add(견적서);
 			
-			String list[][]=supplyTable.strList;
+			String list[][];//=productView.strList;
 			int sum,num;
 			int all = 0;
+			/*
 			for (int k = 0; k < list.length; k++) {
 				sum=0;
 				num=0;
-				if (SupplyTable.toStrFormat((String) list[k][2]) == "non" || list[k][2] == null ){
-					if (SupplyTable.toStrFormat((String) list[k][3]) != "non" && list[k][3] != null ){
-						sum=Integer.parseInt(SupplyTable.toStrFormat(list[k][3]));
-						num = Integer.parseInt(SupplyTable.toStrFormat(list[k][4]));
+				if (Main.toStrFormat((String) list[k][2]) == "non" || list[k][2] == null ){
+					if (Main.toStrFormat((String) list[k][3]) != "non" && list[k][3] != null ){
+						sum=Integer.parseInt(Main.toStrFormat(list[k][3]));
+						num = Integer.parseInt(Main.toStrFormat(list[k][4]));
 					}
 				}
-				if (SupplyTable.toStrFormat((String) list[k][3]) == "non" || list[k][3] == null ){
-					if (SupplyTable.toStrFormat((String) list[k][2]) != "non" && list[k][2] != null ){
-						sum=Integer.parseInt(SupplyTable.toStrFormat(list[k][2]));
-					num = Integer.parseInt(SupplyTable.toStrFormat(list[k][4]));
+				if (Main.toStrFormat((String) list[k][3]) == "non" || list[k][3] == null ){
+					if (Main.toStrFormat((String) list[k][2]) != "non" && list[k][2] != null ){
+						sum=Integer.parseInt(Main.toStrFormat(list[k][2]));
+					num = Integer.parseInt(Main.toStrFormat(list[k][4]));
 					}
 				}
-				if (SupplyTable.toStrFormat((String) list[k][2]) != "non"
-					&& SupplyTable.toStrFormat((String) list[k][3]) != "non") {
+				if (Main.toStrFormat((String) list[k][2]) != "non"
+					&& Main.toStrFormat((String) list[k][3]) != "non") {
 					if (list[k][2] != null && list[k][3] != null) {
-						sum = Integer.parseInt(SupplyTable.toStrFormat(list[k][2]))
-								+ Integer.parseInt(SupplyTable.toStrFormat(list[k][3]));
-						num = Integer.parseInt(SupplyTable.toStrFormat(list[k][4]));
+						sum = Integer.parseInt(Main.toStrFormat(list[k][2]))
+								+ Integer.parseInt(Main.toStrFormat(list[k][3]));
+						num = Integer.parseInt(Main.toStrFormat(list[k][4]));
 					}
 				}
 				all+=sum*num;
 			}
-			String allSum=SupplyTable.toNumFormat(all);
-			createSupDem(document, supply, demand, allSum);
-			document.add(headTable(supplyTable));
-			if (1 == SupplyTable.maxPage)
-				document.add(createTable(supplyTable, SupplyTable.FrontRow, curr, true,allSum));
-			else
-				document.add(createTable(supplyTable, SupplyTable.FrontRow, curr, false,allSum));
+			*/
+			String allSum=Main.toNumFormat(all);
+			writeInit(document, est, allSum);
+			document.add(headTable(est.tableWidth));
+			document.add(createTable(est.tableWidth,est.productList, ProductView.FrontRow, curr, 1 == ProductView.maxPage,allSum));
 			Paragraph para=new Paragraph("1");
 			para.setAlignment(Element.ALIGN_CENTER);
 			
 			
 			document.add(para);
 			// 중간 빈칸
-			for (int i = 1; i < SupplyTable.maxPage; i++) {
+			for (int i = 1; i < ProductView.maxPage; i++) {
 				if (i == 1)
-					curr += SupplyTable.FrontRow;
+					curr += ProductView.FrontRow;
 				else
-					curr += SupplyTable.BackRow;
+					curr += ProductView.BackRow;
 				document.add(new Paragraph(" "));
-				if (i == SupplyTable.maxPage - 1)
-					document.add(createTable(supplyTable, SupplyTable.BackRow, curr, true,allSum));
-				else
-					document.add(createTable(supplyTable, SupplyTable.BackRow, curr, false,allSum));
+				document.add(createTable(est.tableWidth,est.productList, ProductView.BackRow, curr, i == ProductView.maxPage - 1,allSum));
 				para=new Paragraph(String.valueOf(i+1));
 				para.setAlignment(Element.ALIGN_CENTER);
 				document.add(para);
@@ -136,20 +132,19 @@ public class PdfSave {
 		
 	}
 
-	private void createSupDem(Document document, Supply supply, Demand demand, String allSum) {
+	private void writeInit(Document document,Estimate est, String allSum) {
 		try {
 			PdfPTable table = new PdfPTable(2);
 			table.setWidthPercentage(100f);
 			table.setSpacingAfter(8);
-			PdfPCell deCell = new PdfPCell(creDemand(demand.getDemand(),allSum));
+			PdfPCell deCell = new PdfPCell(writeDemand(est.demand,allSum));
 			deCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 			deCell.setBorder(0);
-			PdfPCell supCell = new PdfPCell(creSupply(supply));
+			PdfPCell supCell = new PdfPCell(writeSupply(est.supply));
 			supCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 			supCell.setBorder(0);
 			table.addCell(deCell);
 			table.addCell(supCell);
-
 			document.add(table);
 		} catch (DocumentException e) {
 			// TODO Auto-generated catch block
@@ -159,7 +154,7 @@ public class PdfSave {
 
 	}
 
-	private PdfPTable creDemand(DemandF demand, String allSum) {
+	private PdfPTable writeDemand(Demand demand, String allSum) {
 		PdfPTable table = new PdfPTable(4);
 		PdfPCell title[] = new PdfPCell[4];
 		PdfPCell titleSub[] = new PdfPCell[4];
@@ -212,9 +207,8 @@ public class PdfSave {
 		return table;
 	}
 
-	private PdfPTable creSupply(Supply supply) {
+	private PdfPTable writeSupply(Supply supply) {
 		PdfPTable table = new PdfPTable(5);
-		SupplyF sup = supply.getSupply();
 		try {
 			table.setWidths(new int[] { 8, 12, 30, 12, 30 });
 		} catch (DocumentException e) {
@@ -247,143 +241,129 @@ public class PdfSave {
 
 		title[1].setFixedHeight(28f);
 		table.addCell(title[1]);
-		PdfPCell 등록번호 = new PdfPCell(new Paragraph(sup.num, preFont));
+		PdfPCell 등록번호 = new PdfPCell(new Paragraph(supply.num, preFont));
 		등록번호.setVerticalAlignment(Element.ALIGN_MIDDLE);
 		등록번호.setHorizontalAlignment(Element.ALIGN_CENTER);
 		등록번호.setColspan(3);
 		table.addCell(등록번호);
 
 		table.addCell(title[2]);
-		PdfPCell 상호 = new PdfPCell(new Paragraph(sup.company, font1));
+		PdfPCell 상호 = new PdfPCell(new Paragraph(supply.company, font1));
 		상호.setVerticalAlignment(Element.ALIGN_MIDDLE);
 		table.addCell(상호);
 
 		table.addCell(title[3]);
-		PdfPCell 성명 = new PdfPCell(new Paragraph(sup.name, font1));
+		PdfPCell 성명 = new PdfPCell(new Paragraph(supply.name, font1));
 		성명.setVerticalAlignment(Element.ALIGN_MIDDLE);
 		table.addCell(성명);
 
 		table.addCell(title[4]);
-		PdfPCell 주소 = new PdfPCell(new Paragraph(sup.address, font1));
+		PdfPCell 주소 = new PdfPCell(new Paragraph(supply.address, font1));
 		주소.setVerticalAlignment(Element.ALIGN_MIDDLE);
 		주소.setColspan(3);
 		table.addCell(주소);
 
 		table.addCell(title[5]);
-		PdfPCell 업태 = new PdfPCell(new Paragraph(sup.work, font1));
+		PdfPCell 업태 = new PdfPCell(new Paragraph(supply.work, font1));
 		업태.setVerticalAlignment(Element.ALIGN_MIDDLE);
 		table.addCell(업태);
 
 		table.addCell(title[6]);
-		PdfPCell 종목 = new PdfPCell(new Paragraph(sup.work2, font1));
+		PdfPCell 종목 = new PdfPCell(new Paragraph(supply.work2, font1));
 		종목.setVerticalAlignment(Element.ALIGN_MIDDLE);
 		table.addCell(종목);
 
 		table.addCell(title[7]);
-		PdfPCell 전화 = new PdfPCell(new Paragraph(sup.tel, font1));
+		PdfPCell 전화 = new PdfPCell(new Paragraph(supply.tel, font1));
 		전화.setVerticalAlignment(Element.ALIGN_MIDDLE);
 		table.addCell(전화);
 
 		table.addCell(title[8]);
-		PdfPCell 팩스 = new PdfPCell(new Paragraph(sup.fax, font1));
+		PdfPCell 팩스 = new PdfPCell(new Paragraph(supply.fax, font1));
 		팩스.setVerticalAlignment(Element.ALIGN_MIDDLE);
 		table.addCell(팩스);
 		return table;
 	}
 
-	public static PdfPTable headTable(SupplyTable supplyTable) {
+	public static PdfPTable headTable(int tableWidth[]) {
 		PdfPTable tableHead = new PdfPTable(8);
 		tableHead.setWidthPercentage(100f);
 		try {
-			tableHead.setWidths(new int[] {supplyTable.frontTable.getColumn("품목").getPreferredWidth(),
-					supplyTable.frontTable.getColumn("규격").getPreferredWidth(),
-					supplyTable.frontTable.getColumn("자재비").getPreferredWidth(),
-					supplyTable.frontTable.getColumn("가공비").getPreferredWidth(),
-					supplyTable.frontTable.getColumn("수량").getPreferredWidth(),
-					supplyTable.frontTable.getColumn("단가").getPreferredWidth(),
-					supplyTable.frontTable.getColumn("공급가액").getPreferredWidth(),
-					supplyTable.frontTable.getColumn("비고").getPreferredWidth() });
+			tableHead.setWidths(tableWidth);
 		} catch (DocumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		PdfPCell title[] = new PdfPCell[8];
-		title[0] = new PdfPCell(new Paragraph("품목", font));
-		title[1] = new PdfPCell(new Paragraph("규격", font));
-		title[2] = new PdfPCell(new Paragraph("자재비", font));
-		title[3] = new PdfPCell(new Paragraph("가공비", font));
-		title[4] = new PdfPCell(new Paragraph("수량", font));
-		title[5] = new PdfPCell(new Paragraph("단가", font));
-		title[6] = new PdfPCell(new Paragraph("공급가액", font));
-		title[7] = new PdfPCell(new Paragraph("비고", font));
+		PdfPCell titleCell[] = new PdfPCell[8];
+		titleCell[0] = new PdfPCell(new Paragraph("품목", font));
+		titleCell[1] = new PdfPCell(new Paragraph("규격", font));
+		titleCell[2] = new PdfPCell(new Paragraph("자재비", font));
+		titleCell[3] = new PdfPCell(new Paragraph("가공비", font));
+		titleCell[4] = new PdfPCell(new Paragraph("수량", font));
+		titleCell[5] = new PdfPCell(new Paragraph("단가", font));
+		titleCell[6] = new PdfPCell(new Paragraph("공급가액", font));
+		titleCell[7] = new PdfPCell(new Paragraph("비고", font));
 		// 컬럼 바탕색
-		for (PdfPCell tit : title) {
-			tit.setFixedHeight(24f);
-			tit.setBackgroundColor(BaseColor.LIGHT_GRAY);
-			tit.setHorizontalAlignment(Element.ALIGN_CENTER);
-			tit.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			tableHead.addCell(tit);
+		for (PdfPCell cell : titleCell) {
+			cell.setFixedHeight(24f);
+			cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			tableHead.addCell(cell);
 		}
 		return tableHead;
 	}
 
-	public static PdfPTable createTable(SupplyTable supplyTable, int row, int curr, boolean end,String allSum) {
+	public static PdfPTable createTable(int tableWidth[],ProductList productList, int row, int curr, boolean end,String allSum) {
 		PdfPTable table = new PdfPTable(8);
-		String list[][] = supplyTable.strList;
 		int sum,num;
 		String strSum, strSumNum;
 		float oneRate;
 		table.setWidthPercentage(100f);
 		try {
-			table.setWidths(new int[] { supplyTable.frontTable.getColumn("품목").getPreferredWidth(),
-					supplyTable.frontTable.getColumn("규격").getPreferredWidth(),
-					supplyTable.frontTable.getColumn("자재비").getPreferredWidth(),
-					supplyTable.frontTable.getColumn("가공비").getPreferredWidth(),
-					supplyTable.frontTable.getColumn("수량").getPreferredWidth(),
-					supplyTable.frontTable.getColumn("단가").getPreferredWidth(),
-					supplyTable.frontTable.getColumn("공급가액").getPreferredWidth(),
-					supplyTable.frontTable.getColumn("비고").getPreferredWidth() });
+			table.setWidths(tableWidth);
 		} catch (DocumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "PDF 저장 오류");
 		}
-		oneRate=(float)supplyTable.frontTable.getColumn("품목").getPreferredWidth()/(
-		supplyTable.frontTable.getColumn("규격").getPreferredWidth()+
-		supplyTable.frontTable.getColumn("자재비").getPreferredWidth()+
-		supplyTable.frontTable.getColumn("가공비").getPreferredWidth()+
-		supplyTable.frontTable.getColumn("수량").getPreferredWidth()+
-		supplyTable.frontTable.getColumn("단가").getPreferredWidth()+
-		supplyTable.frontTable.getColumn("공급가액").getPreferredWidth()+
-		supplyTable.frontTable.getColumn("비고").getPreferredWidth());
-		PdfPCell tit;
+		/*
+		oneRate=(float)productView.frontTable.getColumn("품목").getPreferredWidth()/(
+		productView.frontTable.getColumn("규격").getPreferredWidth()+
+		productView.frontTable.getColumn("자재비").getPreferredWidth()+
+		productView.frontTable.getColumn("가공비").getPreferredWidth()+
+		productView.frontTable.getColumn("수량").getPreferredWidth()+
+		productView.frontTable.getColumn("단가").getPreferredWidth()+
+		productView.frontTable.getColumn("공급가액").getPreferredWidth()+
+		productView.frontTable.getColumn("비고").getPreferredWidth());
+		*/
+		PdfPCell tit=null;
 		for (int i = 0; i < row; i++) {
 			sum=-1;
 			num=-1;
 			strSum = "";
 			strSumNum = "";
-			
-			if (SupplyTable.toStrFormat((String) list[curr + i][2]) == "non" || list[curr + i][2] == null ){
-				if (SupplyTable.toStrFormat((String) list[curr + i][3]) != "non" && list[curr + i][3] != null ){
-					sum=Integer.parseInt(SupplyTable.toStrFormat(list[curr + i][3]));
-					num = Integer.parseInt(SupplyTable.toStrFormat(list[curr + i][4]));
+			/*
+			if (Main.toStrFormat((String) list[curr + i][2]) == "non" || list[curr + i][2] == null ){
+				if (Main.toStrFormat((String) list[curr + i][3]) != "non" && list[curr + i][3] != null ){
+					sum=Integer.parseInt(Main.toStrFormat(list[curr + i][3]));
+					num = Integer.parseInt(Main.toStrFormat(list[curr + i][4]));
 				}
 			}
-			if (SupplyTable.toStrFormat((String) list[curr + i][3]) == "non" || list[curr + i][3] == null ){
-				if (SupplyTable.toStrFormat((String) list[curr + i][2]) != "non" && list[curr + i][2] != null ){
-					sum=Integer.parseInt(SupplyTable.toStrFormat(list[curr + i][2]));
-				num = Integer.parseInt(SupplyTable.toStrFormat(list[curr + i][4]));
+			if (Main.toStrFormat((String) list[curr + i][3]) == "non" || list[curr + i][3] == null ){
+				if (Main.toStrFormat((String) list[curr + i][2]) != "non" && list[curr + i][2] != null ){
+					sum=Integer.parseInt(Main.toStrFormat(list[curr + i][2]));
+				num = Integer.parseInt(Main.toStrFormat(list[curr + i][4]));
 				}
 			}
-			if (SupplyTable.toStrFormat((String) list[curr + i][2]) != "non"
-				&& SupplyTable.toStrFormat((String) list[curr + i][3]) != "non") {
+			if (Main.toStrFormat((String) list[curr + i][2]) != "non"
+				&& Main.toStrFormat((String) list[curr + i][3]) != "non") {
 				if (list[curr + i][2] != null && list[curr + i][3] != null) {
-					sum = Integer.parseInt(SupplyTable.toStrFormat(list[curr + i][2]))
-							+ Integer.parseInt(SupplyTable.toStrFormat(list[curr + i][3]));
-					num = Integer.parseInt(SupplyTable.toStrFormat(list[curr + i][4]));
+					sum = Integer.parseInt(Main.toStrFormat(list[curr + i][2]))
+							+ Integer.parseInt(Main.toStrFormat(list[curr + i][3]));
+					num = Integer.parseInt(Main.toStrFormat(list[curr + i][4]));
 				}
 			}
-			strSum = SupplyTable.toNumFormat(sum);
-			strSumNum = SupplyTable.toNumFormat(sum * num);
+			*/
+			strSum = Main.toNumFormat(sum);
+			strSumNum = Main.toNumFormat(sum * num);
 			
 			
 			for (int j = 0; j < 8; j++) {
@@ -402,8 +382,10 @@ public class PdfSave {
 							tit = new PdfPCell(new Paragraph(strSumNum, txtFont));
 						break;
 				case 7:
-					tit = new PdfPCell(new Paragraph(list[curr + i][5], txtFont));
+					
+					//tit = new PdfPCell(new Paragraph(list[curr + i][5], txtFont));
 					break;
+					/*
 					default :
 						if (list[curr + i][j]!=null && list[curr + i][j].length()>(oneRate/0.427)*14){
 							
@@ -414,6 +396,7 @@ public class PdfSave {
 							tit = new PdfPCell(new Paragraph(list[curr + i][j], txtFont));
 						}
 						break;
+						*/
 						
 				}
 				tit.setFixedHeight(20f);
@@ -461,4 +444,5 @@ public class PdfSave {
 		
 		return table;
 	}
+
 }

@@ -16,7 +16,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
-import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -26,18 +25,19 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
-public class Load extends JFrame {
+public class EstimateLoad extends JFrame {
 	JTable table;
 	JPanel panel;
 	
-	SupplyTable supplyTable;
-	Demand demand;
+	ProductView productView;
+	DemandView demandView;
 	JLabel file;
 	JLabel page;
 	//MainFrame mainFrame;
@@ -60,9 +60,9 @@ public class Load extends JFrame {
 	JDatePanelImpl datePanel2 = new JDatePanelImpl(model2, new Properties());
 	JDatePickerImpl datePicker2 = new JDatePickerImpl(datePanel2, new DateFormatter());
 
-	Load(SupplyTable subTable,Demand demand,JLabel file,JLabel page) {
-		this.supplyTable=subTable;
-		this.demand=demand;
+	EstimateLoad(ProductView subTable,DemandView demandView,JLabel file,JLabel page) {
+		this.productView=subTable;
+		this.demandView=demandView;
 		this.file=file;
 		this.page=page;
 		
@@ -112,8 +112,7 @@ public class Load extends JFrame {
 		
 		table.setFocusable(false);
 		table.setAutoCreateRowSorter(true);
-		TableRowSorter sorter = new TableRowSorter(table.getModel());
-		table.setRowSorter(sorter);
+		table.setRowSorter(new TableRowSorter<TableModel>(table.getModel()));
 		table.addMouseListener(new MouseAdapter() {
 			int sel = -1;
 
@@ -128,7 +127,7 @@ public class Load extends JFrame {
 					file.setBounds(419 - file.getText().length() * 5, 5, 300, 20);
 					//setVisible(false);
 					Main.modify = false;
-					page.setText(new String("page" + SupplyTable.currPage + "/" + SupplyTable.maxPage));
+					page.setText(new String("page" + ProductView.currPage + "/" + ProductView.maxPage));
 					repaint();
 					sel = -1;
 				}
@@ -250,7 +249,7 @@ public class Load extends JFrame {
 						+ "_" + manageList.saveListMatch[sel].no));
 				file.setBounds(419 - file.getText().length() * 5, 5, 300, 20);
 				//setVisible(false);
-				page.setText(new String("page" + SupplyTable.currPage + "/" + SupplyTable.maxPage));
+				page.setText(new String("page" + ProductView.currPage + "/" + ProductView.maxPage));
 				repaint();
 			}
 		});
@@ -281,18 +280,10 @@ public class Load extends JFrame {
 			}
 		}
 	}
-
-	/*
-	 * void tableInit() { tableSet(manageList.top); for (int i = 0; i < manageList.top; i++) {
-	 * table.setValueAt(manageList.saveList[i].date, i, 0);
-	 * table.setValueAt(manageList.saveList[i].name, i, 1);
-	 * table.setValueAt(manageList.saveList[i].no, i, 2); } }
-	 */
 	public void loadFile(String file) {
-		Est est = null;
-		DemandF demandF = new DemandF();
+		Estimate est;
+		Demand demand = new Demand();
 		BufferedReader fr = null;
-		String list[][] = supplyTable.tableList.strList;
 		String st;
 		int i = 0, top = 0;
 		try {
@@ -301,36 +292,37 @@ public class Load extends JFrame {
 			st = st.replace("/", "!@#$/");
 			st = st.replace(" ", "");
 			String stn[] = st.split("\\$\\/");
-			demandF.date = stn[0].replaceAll("!@#", "");
-			demandF.name = stn[1].replaceAll("!@#", "");
-			demandF.tel = stn[2].replaceAll("!@#", "");
-			demandF.who = stn[3].replaceAll("!@#", "");
-			est = new Est(demandF);
-			est.maxPage = Integer.parseInt(stn[4].replaceAll("!@#", ""));
+			demand.date = stn[0].replaceAll("!@#", "");
+			demand.name = stn[1].replaceAll("!@#", "");
+			demand.tel = stn[2].replaceAll("!@#", "");
+			demand.who = stn[3].replaceAll("!@#", "");
+			productView.maxPage = Integer.parseInt(stn[4].replaceAll("!@#", ""));
+			ProductView.currPage = 1;
 			if (stn.length > 5) {
 				int pos = 5;
-				supplyTable.frontTable.getColumn("품목").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
-				supplyTable.frontTable.getColumn("규격").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
-				supplyTable.frontTable.getColumn("자재비").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
-				supplyTable.frontTable.getColumn("가공비").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
-				supplyTable.frontTable.getColumn("수량").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
-				supplyTable.frontTable.getColumn("단가").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
-				supplyTable.frontTable.getColumn("공급가액").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
-				supplyTable.frontTable.getColumn("비고").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
+				productView.frontTable.getColumn("품목").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
+				productView.frontTable.getColumn("규격").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
+				productView.frontTable.getColumn("자재비").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
+				productView.frontTable.getColumn("가공비").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
+				productView.frontTable.getColumn("수량").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
+				productView.frontTable.getColumn("단가").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
+				productView.frontTable.getColumn("공급가액").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
+				productView.frontTable.getColumn("비고").setPreferredWidth(Integer.parseInt(stn[pos++].replaceAll("!@#", "")));
 			} else {
-				supplyTable.frontTable.getColumn("품목").setPreferredWidth(Main.tableSize[0]);
-				supplyTable.frontTable.getColumn("규격").setPreferredWidth(Main.tableSize[1]);
-				supplyTable.frontTable.getColumn("자재비").setPreferredWidth(Main.tableSize[2]);
-				supplyTable.frontTable.getColumn("가공비").setPreferredWidth(Main.tableSize[3]);
-				supplyTable.frontTable.getColumn("수량").setPreferredWidth(Main.tableSize[4]);
-				supplyTable.frontTable.getColumn("단가").setPreferredWidth(Main.tableSize[5]);
-				supplyTable.frontTable.getColumn("공급가액").setPreferredWidth(Main.tableSize[6]);
-				supplyTable.frontTable.getColumn("비고").setPreferredWidth(Main.tableSize[7]);
+				productView.frontTable.getColumn("품목").setPreferredWidth(Main.tableSize[0]);
+				productView.frontTable.getColumn("규격").setPreferredWidth(Main.tableSize[1]);
+				productView.frontTable.getColumn("자재비").setPreferredWidth(Main.tableSize[2]);
+				productView.frontTable.getColumn("가공비").setPreferredWidth(Main.tableSize[3]);
+				productView.frontTable.getColumn("수량").setPreferredWidth(Main.tableSize[4]);
+				productView.frontTable.getColumn("단가").setPreferredWidth(Main.tableSize[5]);
+				productView.frontTable.getColumn("공급가액").setPreferredWidth(Main.tableSize[6]);
+				productView.frontTable.getColumn("비고").setPreferredWidth(Main.tableSize[7]);
 			}
 			String tmp = "";
+		
 			while (null != (st = fr.readLine())) {
-				st = st.replace("/", "!@#$/");
-				st = st.replace(" ", "");
+				st = st.replaceAll("/", "!@#$/");
+				st = st.replaceAll(" ", "");
 				stn = st.split("\\$\\/");
 				if (stn.length != 6) {
 					tmp = tmp + st;
@@ -338,57 +330,32 @@ public class Load extends JFrame {
 					if (stn.length != 6)
 						continue;
 				}
+				//리스트 저장
+				/*
 				if (i == list.length) {
-					supplyTable.tableList.resize();
-					list = supplyTable.tableList.strList;
+					productView.tableList.resize();
+					list = productView.tableList.strList;
 				}
-				list[i][0] = stn[0].replaceAll("!@#", "");
-				list[i][1] = stn[1].replaceAll("!@#", "");
-				list[i][2] = stn[2].replaceAll("!@#", "");
-				list[i][3] = stn[3].replaceAll("!@#", "");
-				list[i][4] = stn[4].replaceAll("!@#", "");
-				list[i][5] = stn[5].replaceAll("!@#", "");
+				est.productList.loadStr(stn);
 				i++;
+				*/
 			}
 			fr.close();
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		supplyTable.maxPage = est.maxPage;
-		SupplyTable.currPage = 1;
+		
 		//cardlayout.first(masterPane);
-		supplyTable.tableList.listRe(supplyTable.frontTable);
-		supplyTable.valueChangedUpdate(supplyTable.frontTable);
-		demand.setDemand(est.demand);
+		//productView.tableList.listRe(productView.frontTable);
+		productView.valueChangedUpdate(productView.frontTable);
+		//demandView.setDemand(est.demand);
 	}
-
-	/*
-	 * public void addSaveList(DemandF demandF, int sumDatas, int number) { loadList(); File a = new
-	 * File("save"); if (a.exists() == false) { a.mkdirs(); } String fileName; fileName = new
-	 * String("save\\saveAll.txt"); try { BufferedWriter fw; fw = new BufferedWriter(new
-	 * FileWriter(fileName)); fw.write((manageList.num+1)+"\r\n"); for (int i = 0; i < manageList.top;
-	 * i++) { fw.write(manageList.saveList[i].date + "/" + manageList.saveList[i].name + "/" +
-	 * manageList.saveList[i].money + "/" + manageList.saveList[i].no + "/"); fw.write("\r\n"); }
-	 * fw.write(demandF.date + "/" + demandF.name + "/" + sumDatas + " /" + number + " /");
-	 * fw.write("\r\n"); fw.flush();
-	 * 
-	 * fw.close(); } catch (Exception e3) { e3.printStackTrace(); } }
-	 */
 	public void removeList(String str) {
 		File f = new File("save\\" + str);
 		f.delete();
 		loadList();
 		tableInit();
 	}
-	/*
-	 * public void removeList(int num) { loadList(); String fileName; fileName = new
-	 * String("save\\saveAll.txt"); try { BufferedWriter fw; fw = new BufferedWriter(new
-	 * FileWriter(fileName)); fw.write((manageList.num-1)+"\r\n"); for (int i = 0; i < manageList.top;
-	 * i++) { if (i==num) continue; fw.write(manageList.saveList[i].date + "/" +
-	 * manageList.saveList[i].name + "/" + manageList.saveList[i].money + "/" +
-	 * manageList.saveList[i].no + "/"); fw.write("\r\n"); } fw.flush(); fw.close(); } catch
-	 * (Exception e3) { e3.printStackTrace(); } loadList(); tableInit(); }
-	 */
 }
 
 class ManageList {
@@ -400,8 +367,6 @@ class ManageList {
 	SaveList[] saveListMatch;
 	Date after, curr, before;
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-	// int num;
 
 	ManageList() {
 		maxSize = 100;
@@ -492,13 +457,13 @@ class ManageList {
 
 class ActionLis implements ActionListener {
 	ManageList manageList;
-	Load load;
+	EstimateLoad estimateLoad;
 	JTextField searchCompField;
 	JTextField searchItemField;
 
-	ActionLis(ManageList manageList, Load load) {
+	ActionLis(ManageList manageList, EstimateLoad estimateLoad) {
 		this.manageList = manageList;
-		this.load = load;
+		this.estimateLoad = estimateLoad;
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -507,7 +472,7 @@ class ActionLis implements ActionListener {
 
 	public void search() {
 		manageList.setMatchStr(searchCompField.getText(), searchItemField.getText());
-		load.tableInit();
+		estimateLoad.tableInit();
 	}
 }
 
