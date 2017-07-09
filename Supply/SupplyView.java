@@ -1,3 +1,4 @@
+package Supply;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -8,15 +9,17 @@ import java.io.IOException;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-public class SupplyView extends WhitePanel {
+import FrameComponent.ViewManager;
+import FrameComponent.WhitePanel;
+import Main.Main;
+
+public class SupplyView extends WhitePanel{
 
 	JLabel sup[] = new JLabel[8];
 	WhitePanel pane=this;
-	Supply supply;
 	
-	SupplyView(Supply supply) {
+	public SupplyView(ViewManager viewManager) {
 		setBounds(358, 90, 500, 200);
-		this.supply=supply;
 		supplyInit();
 		init();
 	}
@@ -61,7 +64,6 @@ public class SupplyView extends WhitePanel {
 	
 	void init() {
 		BufferedReader fr = null;
-		boolean out = false;
 		String st;
 		for (int i = 0; i < 8; i++) {
 			sup[i] = new JLabel();
@@ -88,17 +90,19 @@ public class SupplyView extends WhitePanel {
 			} catch (IOException e2) {
 				e2.printStackTrace();
 			}
-		fromSupply();
+		setSupply(getSupply());
 		}
-	public void fromSupply(){
-		supply.num=sup[0].getText();
-		supply.company=sup[1].getText();
-		supply.name=sup[2].getText();
-		supply.address=sup[3].getText();
-		supply.work=sup[4].getText();
-		supply.work2=sup[5].getText();
-		supply.tel=sup[6].getText();
-		supply.fax=sup[7].getText();
+	public Supply getSupply(){
+		Supply supply=new Supply();
+		supply.setNum(sup[0].getText());
+		supply.setCompany(sup[1].getText());
+		supply.setName(sup[2].getText());
+		supply.setAddress(sup[3].getText());
+		supply.setWork(sup[4].getText());
+		supply.setWork2(sup[5].getText());
+		supply.setTel(sup[6].getText());
+		supply.setFax(sup[7].getText());
+		return supply;
 	}
 	public void paint(Graphics g) {
 		super.paint(g);
@@ -115,6 +119,20 @@ public class SupplyView extends WhitePanel {
 		for (int i = 0; i < 4; i++) {
 			g.drawRect(84, 52 + 36 * i, 365 - 72, 36);
 		}
+		
+	}
+	public void setSupply(Supply supply) {
+		supply.setNum(supply.getNum());
+		supply.setCompany(supply.getCompany());
+		supply.setName(supply.getName());
+		supply.setAddress(supply.getAddress());
+		supply.setWork(supply.getWork());
+		supply.setWork2(supply.getWork2());
+		supply.setTel(supply.getTel());
+		supply.setFax(supply.getFax());
+	}
+	public void refresh() {
+		// TODO Auto-generated method stub
 		
 	}
 }

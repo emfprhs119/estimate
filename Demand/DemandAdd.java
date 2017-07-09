@@ -1,3 +1,4 @@
+package Demand;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -12,28 +13,22 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-class DemandAdd extends JFrame {
-	DemandList demandList;
-	private WhitePanel leftPanel;
-	private WhitePanel rightPanel;
-	private JPanel[] rightTextPanel;
-	private JPanel[] leftLabelPanel;
-	JTextField[] textField;
-	private JButton button;
-	private int i;
+import FrameComponent.WhitePanel;
+import Main.Main;
 
-	DemandAdd(DemandList demandList) {
+class DemandAdd extends JFrame {
+	JTextField textField[];
+	DemandAdd(DemandLoad demandLoad) {
 		setLayout(null);
 		setBounds(500, 500, 235, 170);
-		this.demandList = demandList;
-		leftPanel = new WhitePanel();
-		rightPanel = new WhitePanel();
+		WhitePanel leftPanel = new WhitePanel();
+		WhitePanel rightPanel = new WhitePanel();
 		leftPanel.setLayout(null);
 		leftPanel.setBounds(65, 0, 180, 130);
 		rightPanel.setBounds(0, 0, 65, 130);
 
-		rightTextPanel = new JPanel[3];
-		leftLabelPanel = new JPanel[3];
+		JPanel[] rightTextPanel = new JPanel[3];
+		JPanel[] leftLabelPanel = new JPanel[3];
 		textField = new JTextField[3];
 		for (int i = 0; i < 3; i++) {
 			rightTextPanel[i] = new JPanel();
@@ -48,7 +43,7 @@ class DemandAdd extends JFrame {
 		rightTextPanel[1].add(textField[1] = new JTextField(11));
 		rightTextPanel[2].add(textField[2] = new JTextField(11));
 
-		for (i = 0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) {
 			rightTextPanel[i].setBounds(0, i * 30, 150, 35);
 			leftLabelPanel[i].setBounds(-10, i * 30, 90, 35);
 			rightTextPanel[i].setBackground(Color.WHITE);
@@ -57,24 +52,17 @@ class DemandAdd extends JFrame {
 			label[i].setHorizontalAlignment(JLabel.RIGHT);
 			textField[i].setFont(new Font(Main.font, Font.BOLD, 13));
 			textField[i].setHorizontalAlignment(JTextField.LEFT);
-			textField[i].addKeyListener(new DemandAddListener(i, this));
+			textField[i].addKeyListener(new DemandAddListener(i,demandLoad, this));
 			rightPanel.add(leftLabelPanel[i]);
 			leftPanel.add(rightTextPanel[2 - i]);
 		}
-		button = new JButton("Ãß°¡");
-		button.setFont(new Font(Main.font, 0, 12)); //
+		JButton button = new JButton("Ãß°¡");
+		button.setFont(new Font(Main.font, 0, 12));
 		button.setBounds(80, 100, 60, 20);
-		button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				DemandList list = DemandLoad.loadList();
-				list.addList(getDemand());
-				DemandLoad.saveList(list);
-				removeField();
-			}
-		});
-		add(button);// ÀúÀå add(button);//´Ý±â
+		button.addActionListener(new DemandAddListener(0,demandLoad, this));
+		add(button);
 		button = new JButton("´Ý±â");
-		button.setFont(new Font(Main.font, 0, 12)); //
+		button.setFont(new Font(Main.font, 0, 12));
 		button.setBounds(150, 100, 60, 20);
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -88,9 +76,9 @@ class DemandAdd extends JFrame {
 
 	Demand getDemand() {
 		Demand demand = new Demand();
-		demand.name = textField[0].getText();
-		demand.tel = textField[1].getText();
-		demand.who = textField[2].getText();
+		demand.setName(textField[0].getText());
+		demand.setTel(textField[1].getText());
+		demand.setWho(textField[2].getText());
 		return demand;
 	}
 
@@ -101,24 +89,26 @@ class DemandAdd extends JFrame {
 		textField[0].requestFocus();
 	}
 }
-
-class DemandAddListener extends KeyAdapter {
+class DemandAddListener extends KeyAdapter implements ActionListener {
 	int key;
 	DemandAdd demandAdd;
-	DemandAddListener(int key, DemandAdd demandAdd) {
+	DemandLoad demandLoad;
+	DemandAddListener(int key,DemandLoad demandLoad, DemandAdd demandAdd) {
 		this.key = key;
 		this.demandAdd =demandAdd;
+		this.demandLoad=demandLoad;
 	}
-
+	public void actionPerformed(ActionEvent e) {
+		if (demandLoad.addDemand(demandAdd.getDemand()))
+			demandAdd.removeField();
+	}
 	public void keyPressed(KeyEvent keyEvent) {
 		if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
 			if (key != 2)
 				demandAdd.textField[key + 1].requestFocus();
 			else{
-				DemandList list = DemandLoad.loadList();
-				list.addList(demandAdd.getDemand());
-				DemandLoad.saveList(list);
-				demandAdd.removeField();
+				if (demandLoad.addDemand(demandAdd.getDemand()))
+					demandAdd.removeField();
 			}
 		}
 	}

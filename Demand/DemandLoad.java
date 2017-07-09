@@ -1,3 +1,4 @@
+package Demand;
 
 import java.awt.Button;
 import java.awt.Dimension;
@@ -27,7 +28,12 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import FrameComponent.ViewManager;
+import Main.CsvPasser;
+import Main.Main;
+
 public class DemandLoad extends JFrame {
+	ViewManager viewManager;
 	JTable table;
 	JPanel panel;
 	JTextField searchField;
@@ -35,13 +41,12 @@ public class DemandLoad extends JFrame {
 	JButton searchButton;
 	DemandAdd demandAdd;
 	DemandList demandList;
-	Estimate est;
 
-	DemandLoad() {
-		
+	public DemandLoad(ViewManager viewManager) {
+		this.viewManager = viewManager;
 		panel = new JPanel();
-		demandList = new DemandList();
-		demandAdd=new DemandAdd(demandList);
+		demandList = DemandLoad.loadList();
+		demandAdd = new DemandAdd(this);
 		searchField = new JTextField(14);
 		searchLabel = new JLabel("상호");
 		searchButton = new JButton("검색");
@@ -53,15 +58,13 @@ public class DemandLoad extends JFrame {
 		searchField.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					demandList.setMatchStr(searchField.getText());
-					tableInit();
+					tableUpdate();
 				}
 			}
 		});
 		searchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				demandList.setMatchStr(searchField.getText());
-				tableInit();
+				tableUpdate();
 			}
 		});
 		searchLabel.setBounds(8, 10, 30, 20);
@@ -73,14 +76,16 @@ public class DemandLoad extends JFrame {
 		add(panel);
 	}
 
-	void tableInit() {
+	void tableUpdate() {
+		demandList.setList(loadList());
+		demandList.setMatchStr(searchField.getText());
 		if (demandList.getMatchCount() == 0)
 			return;
 		tableSet(demandList.getMatchCount());
-		for (int i = 0; i < demandList.mattop; i++) {
-			table.setValueAt(demandList.demandMatch[i].name, i, 0);
-			table.setValueAt(demandList.demandMatch[i].tel, i, 2);
-			table.setValueAt(demandList.demandMatch[i].who, i, 1);
+		for (int i = 0; i < demandList.getMatchCount(); i++) {
+			table.setValueAt(demandList.getMatch(i).getName(), i, 0);
+			table.setValueAt(demandList.getMatch(i).getTel(), i, 2);
+			table.setValueAt(demandList.getMatch(i).getWho(), i, 1);
 		}
 	}
 
@@ -101,10 +106,7 @@ public class DemandLoad extends JFrame {
 				int sel = table.getSelectedRow();
 				if (sel == -1)
 					return;
-				remove(sel);
-				loadList();
-				tableInit();
-				// 제거
+				removeDemand(sel);// 제거
 			}
 		});
 		button[2] = new Button("불러오기");
@@ -114,8 +116,9 @@ public class DemandLoad extends JFrame {
 				int sel = table.getSelectedRow();
 				if (sel == -1)
 					return;
-				est.setDemand(demandList.demandMatch[sel]);
+				viewManager.setDemand(demandList.getMatch(sel));
 				setVisible(false);
+				sel = -1;
 			}
 		});
 		add(button[0]);
@@ -149,7 +152,7 @@ public class DemandLoad extends JFrame {
 				if (sel == table.getSelectedRow()) {
 					if (sel == -1)
 						return;
-					est.setDemand(demandList.demandMatch[sel]);
+					viewManager.setDemand(demandList.getMatch(sel));
 					setVisible(false);
 					sel = -1;
 				}
@@ -162,23 +165,23 @@ public class DemandLoad extends JFrame {
 		panel.removeAll();
 		panel.add(scroll);
 		setVisible(true);
-		/*
-		 * frame.repaint(); panel.repaint();
-		 */
 	}
-	//수요자 목록 저장
+
+	// 수요자 목록 저장
 	static public void saveList(DemandList list) {
-		String name, tel, who;
 		String fileName;
-		fileName = new String("demandList");
+		fileName = new String("demandList.csv");
 		BufferedWriter fw;
 		try {
 			fw = new BufferedWriter(new FileWriter(fileName));
-			for (int i = 0; i < list.top; i++) {
-					name = list.demands[i].name;
-					tel = list.demands[i].tel;
-					who = list.demands[i].who;
-					fw.write(name + "/" + tel + "/" + who + "/\r\n");
+			fw.write("v1.0");
+			fw.write("\r\n");
+			for (int i = 0; i < list.getCount(); i++) {
+				String stn[]=list.getDemand(i).getStrings();
+				for(int j=0;j<4;j++){
+					fw.write(Main.checkString(stn[j])+",");
+				}
+				fw.write("\r\n");
 			}
 			fw.flush();
 			fw.close();
@@ -186,27 +189,27 @@ public class DemandLoad extends JFrame {
 			e3.printStackTrace();
 		}
 	}
-	//수요자 목록 로드
+
+	// 수요자 목록 로드
 	static public DemandList loadList() {
-		BufferedReader fr;
-		File f;
-		String st, name, tel, who, stn[];
+		String stn[];
+		String st;
 		DemandList demandList = new DemandList();
 		try {
-			f = new File("demandList");
+			File f = new File("demandList.csv");
 			if (f.exists() == false) {
 				return demandList;
 			}
-			fr = new BufferedReader(new FileReader("demandList.list"));
-			while (null != (st = fr.readLine())) {
-				stn = st.split("/");
-				if (stn.length == 0) {
-					break;
+			BufferedReader fr = new BufferedReader(new FileReader("demandList.csv"));
+			if (fr.readLine().equals("v1.0")) {
+
+				while (null != (st = fr.readLine())) {
+					stn = CsvPasser.csvSplit(st);
+					for (int i = 0; i < 6; i++)
+						if (stn[i].equals("-"))
+							stn[i] = "";
+					demandList.addList(new Demand(stn));
 				}
-				name = stn[0].replaceAll(" ", "");
-				tel = stn[1].replaceAll(" ", "");
-				who = stn[2].replaceAll(" ", "");
-				demandList.addList(new Demand(name,tel,who));
 			}
 			fr.close();
 		} catch (FileNotFoundException e) {
@@ -217,7 +220,19 @@ public class DemandLoad extends JFrame {
 		return demandList;
 	}
 
-	public void remove(int sel) {//
-		demandList.removeMat(sel);
+	public boolean addDemand(Demand demand) {
+		DemandList list = DemandLoad.loadList();
+		if (!list.addList(demand))
+			return false;
+		DemandLoad.saveList(list);
+		tableUpdate();
+		return true;
+	}
+
+	public void removeDemand(int sel) {
+		DemandList list = DemandLoad.loadList();
+		list.removeList(sel);
+		DemandLoad.saveList(list);
+		tableUpdate();
 	}
 }

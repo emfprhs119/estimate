@@ -1,3 +1,4 @@
+package Demand;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -17,14 +18,18 @@ import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import FrameComponent.ViewManager;
+import FrameComponent.WhitePanel;
+import Main.Main;
+
 
 
 public class DemandView extends WhitePanel {
-	Demand demand;
 	WhitePanel leftPanel, rightPanel;
 	JPanel rightTextPanel[];
 	JPanel leftLabelPanel[];
@@ -36,10 +41,9 @@ public class DemandView extends WhitePanel {
 	JButton demandLoadButton;
 
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	public DemandView(Demand demand) {
+	public DemandView(ViewManager viewManager) {
 		setBounds(0, 124, 350, 290);
-		this.demand=demand;
-		demandLoad = new DemandLoad();
+		demandLoad = new DemandLoad(viewManager);
 		leftPanel = new WhitePanel();
 		rightPanel = new WhitePanel();
 		leftPanel.setBounds(45, 4, 350, 120);
@@ -70,6 +74,7 @@ public class DemandView extends WhitePanel {
 		
 		demandLoadButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				demandLoad.tableUpdate();
 				demandLoad.setVisible(true);
 			}
 		});
@@ -88,7 +93,7 @@ public class DemandView extends WhitePanel {
 				rightTextField[i].setBounds(7, 1, 174, 25);
 				rightTextField[i].setFont(new Font(Main.font, Font.BOLD, 15));
 				rightTextField[i].setHorizontalAlignment(JTextField.LEFT);
-				rightTextField[i].addKeyListener(new DemandListener(i,rightTextField,demand));
+				rightTextField[i].addKeyListener(new DemandListener(i,rightTextField));
 			}
 			rightPanel.add(leftLabelPanel[i]);
 			leftPanel.add(rightTextPanel[3 - i]);
@@ -108,25 +113,29 @@ public class DemandView extends WhitePanel {
 	}
 
 	public void setDemand(Demand demand) {
-		if (demand.date != null) {
-			String[] token = demand.date.split("-");
+		if (demand.getDate() != null) {
+			String[] token = demand.getDate().split("-");
 			model.setDate(Integer.parseInt(token[0]), Integer.parseInt(token[1])-1, Integer.parseInt(token[2]));
 			model.setSelected(true);
 		}
-		rightTextField[1].setText(demand.name);
-		rightTextField[2].setText(demand.tel);
-		rightTextField[3].setText(demand.who);
+		rightTextField[1].setText(demand.getName());
+		rightTextField[2].setText(demand.getTel());
+		rightTextField[3].setText(demand.getWho());
 	}
 
 	public Demand getDemand() {
 		Demand demand = new Demand();
-		//sdf.set2DigitYearStart(model.getValue());
-		demand.date =sdf.format(model.getValue());//datePicker.get;
-		demand.name = rightTextField[1].getText();
-		demand.tel = rightTextField[2].getText();
-		demand.who = rightTextField[3].getText();
+		demand.setDate(sdf.format(model.getValue()));//datePicker.get;
+		demand.setName(rightTextField[1].getText());
+		demand.setTel(rightTextField[2].getText());
+		demand.setWho(rightTextField[3].getText());
 		return demand;
 	}
+
+	public void refresh() {
+		this.repaint();
+	}
+
 	
 }
 class DateFormatter extends AbstractFormatter {
@@ -151,11 +160,9 @@ class DateFormatter extends AbstractFormatter {
 class DemandListener extends KeyAdapter{
 	JTextField textField[];
 	int key;
-	Demand demand;
-	DemandListener(int key,JTextField textField[],Demand demand){
+	DemandListener(int key,JTextField textField[]){
 		this.key=key;
 		this.textField=textField;
-		this.demand=demand;
 	}
 		public void keyPressed(KeyEvent keyEvent) {
 			if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -163,10 +170,5 @@ class DemandListener extends KeyAdapter{
 					textField[key + 1].requestFocus();
 			} else
 				Main.modify = true;
-			switch(key){
-				case 1:demand.setName(((JTextField)keyEvent.getSource()).getText());break;
-				case 2:demand.setTel(((JTextField)keyEvent.getSource()).getText());break;
-				case 3:demand.setWho(((JTextField)keyEvent.getSource()).getText());break;
-			}
 		}
 }
