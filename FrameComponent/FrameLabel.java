@@ -9,11 +9,12 @@ import Main.Main;
 
 public class FrameLabel {
 	public String getFileNameStr() {
-		return fileName.getText().replace("견적서_", "").replace(".csv", "");
+		return fileName.getText().replace("견적서_", "").replace("save\\", "").replace(".csv", "");
 	}
 	public void setFileName(String fileName) {
+		fileName=fileName.replace("견적서_", "").replace("save\\", "").replace(".csv", "");
 		this.fileName.setText("견적서_"+fileName);
-		this.fileName.setBounds(419 - fileName.length() * 5, 5, 300, 20);
+		this.fileName.setBounds(390 - fileName.length() * 5, 5, 300, 20);
 	}
 	public JLabel getPage() {
 		return page;

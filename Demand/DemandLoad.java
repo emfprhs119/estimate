@@ -20,6 +20,7 @@ import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -45,8 +46,8 @@ public class DemandLoad extends JFrame {
 	public DemandLoad(ViewManager viewManager) {
 		this.viewManager = viewManager;
 		panel = new JPanel();
-		demandList = DemandLoad.loadList();
 		demandAdd = new DemandAdd(this);
+		demandList = new DemandList();
 		searchField = new JTextField(14);
 		searchLabel = new JLabel("상호");
 		searchButton = new JButton("검색");
@@ -54,7 +55,9 @@ public class DemandLoad extends JFrame {
 		setBounds(200, 300, 380, 600);
 		setLayout(null);
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		setResizable(false);
 		buttonInit();
+		tableInit();
 		searchField.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -74,19 +77,6 @@ public class DemandLoad extends JFrame {
 		add(searchField);
 		add(searchButton);
 		add(panel);
-	}
-
-	void tableUpdate() {
-		demandList.setList(loadList());
-		demandList.setMatchStr(searchField.getText());
-		if (demandList.getMatchCount() == 0)
-			return;
-		tableSet(demandList.getMatchCount());
-		for (int i = 0; i < demandList.getMatchCount(); i++) {
-			table.setValueAt(demandList.getMatch(i).getName(), i, 0);
-			table.setValueAt(demandList.getMatch(i).getTel(), i, 2);
-			table.setValueAt(demandList.getMatch(i).getWho(), i, 1);
-		}
 	}
 
 	public void buttonInit() {
@@ -113,12 +103,17 @@ public class DemandLoad extends JFrame {
 		button[2].setBounds(265, 495, 80, 40);
 		button[2].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				int sel = table.getSelectedRow();
-				if (sel == -1)
+				int index = table.getSelectedRow();
+				if (table == null) {
+					JOptionPane.showMessageDialog(null, "불러올 수 없습니다.");
 					return;
-				viewManager.setDemand(demandList.getMatch(sel));
+				}
+				if (index == -1){
+					JOptionPane.showMessageDialog(null, "거래처를 선택해 주세요.");
+					return;
+				}
+				viewManager.setDemand(demandList.getMatch(index));
 				setVisible(false);
-				sel = -1;
 			}
 		});
 		add(button[0]);
@@ -126,8 +121,8 @@ public class DemandLoad extends JFrame {
 		add(button[2]);
 	}
 
-	public void tableSet(int n) {
-		Object row = new Object[n][3];
+	void tableInit() {
+		Object row = new Object[0][3];
 		Object column[] = { "상호", "담당자", "전화번호" };
 		DefaultTableModel model = new DefaultTableModel((Object[][]) row, column) {
 			public boolean isCellEditable(int row, int col) {
@@ -144,50 +139,74 @@ public class DemandLoad extends JFrame {
 		table.getTableHeader().setFont(new Font(Main.font, 0, 12));
 
 		table.setAutoCreateRowSorter(true);
-		table.setRowSorter(new TableRowSorter<TableModel>(table.getModel()));
+		table.getRowSorter().toggleSortOrder(0);
+		table.getTableHeader().addMouseListener(new MouseAdapter() {
+			int colum;
+			boolean decreasingFlag=false;
+			
+		    @Override
+		    public void mouseClicked(MouseEvent e) {
+		        if (colum==table.columnAtPoint(e.getPoint()))
+		        	decreasingFlag=!decreasingFlag;
+		        else{
+		        	colum=table.columnAtPoint(e.getPoint());
+		        	decreasingFlag=true;
+		        }
+		        demandList.matchSort(colum,decreasingFlag);
+		    }
+		});
 		table.addMouseListener(new MouseAdapter() {
-			int sel = -1;
-
-			public void mouseReleased(MouseEvent arg0) {
-				if (sel == table.getSelectedRow()) {
-					if (sel == -1)
+			public void mouseClicked(MouseEvent event) {
+				int index = table.getSelectedRow();
+				if (event.getClickCount() == 2) {
+					if (table == null) {
+						JOptionPane.showMessageDialog(null, "불러올 수 없습니다.");
 						return;
-					viewManager.setDemand(demandList.getMatch(sel));
+					}
+					if (index == -1){
+						JOptionPane.showMessageDialog(null, "거래처를 선택해 주세요.");
+						return;
+					}
+					viewManager.setDemand(demandList.getMatch(index));
 					setVisible(false);
-					sel = -1;
 				}
-				sel = table.getSelectedRow();
 			}
 		});
 		JScrollPane scroll = new JScrollPane(table);
 		scroll.setPreferredSize(new Dimension(350, 440));
 		panel.setBounds(7, 40, 350, 440);
-		panel.removeAll();
 		panel.add(scroll);
-		setVisible(true);
 	}
 
-	// 수요자 목록 저장
-	static public void saveList(DemandList list) {
-		String fileName;
-		fileName = new String("demandList.csv");
-		BufferedWriter fw;
-		try {
-			fw = new BufferedWriter(new FileWriter(fileName));
-			fw.write("v1.0");
-			fw.write("\r\n");
-			for (int i = 0; i < list.getCount(); i++) {
-				String stn[]=list.getDemand(i).getStrings();
-				for(int j=0;j<4;j++){
-					fw.write(Main.checkString(stn[j])+",");
-				}
-				fw.write("\r\n");
-			}
-			fw.flush();
-			fw.close();
-		} catch (Exception e3) {
-			e3.printStackTrace();
+	public void setVisible(boolean b) {
+		if (b)
+			tableUpdate();
+		super.setVisible(b);
+	}
+
+	void tableUpdate() {
+		demandList.setList(loadList());
+		demandList.setMatchStr(searchField.getText());
+		if (demandList.getMatchCount() == 0)
+			return;
+
+		tableSet(demandList.getMatchCount());
+		for (int i = 0; i < demandList.getMatchCount(); i++) {
+			table.setValueAt(demandList.getMatch(i).getName(), i, 0);
+			table.setValueAt(demandList.getMatch(i).getTel(), i, 2);
+			table.setValueAt(demandList.getMatch(i).getWho(), i, 1);
 		}
+	}
+
+	public void tableSet(int n) {
+		Object row = new Object[n][3];
+		Object column[] = { "상호", "담당자", "전화번호" };
+		DefaultTableModel model = new DefaultTableModel((Object[][]) row, column) {
+			public boolean isCellEditable(int row, int col) {
+				return false;
+			}
+		};
+		table.setModel(model);
 	}
 
 	// 수요자 목록 로드
@@ -201,13 +220,15 @@ public class DemandLoad extends JFrame {
 				return demandList;
 			}
 			BufferedReader fr = new BufferedReader(new FileReader("demandList.csv"));
-			if (fr.readLine().equals("v1.0")) {
 
+			if (fr.readLine().replaceAll(",","").equals("v1.0")) {
+				fr.readLine(); //상호,정화번호,담당자 레이블
 				while (null != (st = fr.readLine())) {
 					stn = CsvPasser.csvSplit(st);
-					for (int i = 0; i < 6; i++)
+					for (int i = 0; i < 3; i++) {
 						if (stn[i].equals("-"))
 							stn[i] = "";
+					}
 					demandList.addList(new Demand(stn));
 				}
 			}
@@ -218,6 +239,31 @@ public class DemandLoad extends JFrame {
 			e1.printStackTrace();
 		}
 		return demandList;
+	}
+
+	// 수요자 목록 저장
+	static public void saveList(DemandList list) {
+		String fileName;
+		fileName = new String("demandList.csv");
+		BufferedWriter fw;
+		try {
+			fw = new BufferedWriter(new FileWriter(fileName));
+			fw.write("v1.0");
+			fw.write("\r\n");
+			fw.write("상호,전화번호,담당자");
+			fw.write("\r\n");
+			for (int i = 0; i < list.getCount(); i++) {
+				String stn[] = list.getDemand(i).getStrings();
+				for (int j = 1; j < 4; j++) {
+					fw.write(Main.checkString(stn[j]) + ",");
+				}
+				fw.write("\r\n");
+			}
+			fw.flush();
+			fw.close();
+		} catch (Exception e3) {
+			e3.printStackTrace();
+		}
 	}
 
 	public boolean addDemand(Demand demand) {

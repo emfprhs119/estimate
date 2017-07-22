@@ -1,29 +1,23 @@
 package Estimate;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import Demand.Demand;
-
 class EstimateList {
-	LoadData[] loadDatas;
-	LoadData[] loadDataMatch;
-	int maxSize;
-	int count;
-	int matchCount;
+	private LoadData[] loadDataArr;
+	private LoadData[] loadDataMatch;
+	private int maxSize;
+	private int count;
+	private int matchCount;
 
-	String match, item;
-	Date after, curr, before;
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	private String match, item;
+	private Date after, curr, before;
+	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
 	EstimateList() {
 		maxSize = 100;
-		loadDatas = new LoadData[maxSize];
+		loadDataArr = new LoadData[maxSize];
 		loadDataMatch = new LoadData[maxSize];
 		count = 0;
 		match = "";
@@ -41,18 +35,14 @@ class EstimateList {
 		this.item = item;
 	}
 
-	void addList(String str) {
-		String stn[] = str.split("_");
-		if (stn.length != 4 || !stn[0].equals("°ßÀû¼­"))
-			return;
-		String name = stn[1];
-		String date = stn[2];
-		String no = stn[3].replaceAll(".csv", "");
-		if (!name.equals("")) {
-			if (count == maxSize)
-				resize();
-			loadDatas[count++] = new LoadData(date, name, no);
+	boolean addList(LoadData loadData) {
+		if (loadData.equals(null) || loadData.getName().trim().equals("")) {
+			return false;
 		}
+		if (count == maxSize)
+			resize();
+		this.loadDataArr[count++] = loadData;
+		return true;
 	}
 
 	void resize() {
@@ -60,21 +50,21 @@ class EstimateList {
 		LoadData temp[] = new LoadData[maxSize];
 		loadDataMatch = new LoadData[maxSize];
 		for (int i = 0; i < maxSize / 2; i++)
-			temp[i] = loadDatas[i];
-		loadDatas = temp;
+			temp[i] = loadDataArr[i];
+		loadDataArr = temp;
 	}
 
 	public int getMatchCount() {
 		matchCount = 0;
 		for (int i = 0; i < count; i++) {
 			try {
-				curr = sdf.parse(loadDatas[i].date);
+				curr = sdf.parse(loadDataArr[i].getDate());
 			} catch (ParseException e1) {
 				e1.printStackTrace();
 			}
-			if ((before == null || (curr.after(before))) && ((after == null) || curr.before(after))){
-				if (loadDatas[i].name.matches(".*" + match + ".*")) {
-					addMatch(loadDatas[i]);
+			if ((before == null || (curr.after(before))) && ((after == null) || curr.before(after))) {
+				if (loadDataArr[i].getName().matches(".*" + match + ".*")) {
+					addMatch(loadDataArr[i]);
 				}
 			}
 		}
@@ -84,13 +74,42 @@ class EstimateList {
 	private void addMatch(LoadData loadData) {
 		loadDataMatch[matchCount++] = loadData;
 	}
+
 	public LoadData getMatch(int index) {
 		return loadDataMatch[index];
 	}
+
 	public int getCount() {
 		return count;
 	}
+
 	public LoadData getLoadData(int index) {
-		return loadDatas[index];
+		return loadDataArr[index];
 	}
+
+	public void setList(EstimateList estimateList) {
+		this.loadDataArr = estimateList.loadDataArr;
+		this.maxSize = estimateList.maxSize;
+		this.count = estimateList.count;
+	}
+
+	public void matchSort(int num,boolean decreasingFlag) {
+		for(int i=0;i<matchCount-1;i++){
+			for(int j=0;j<matchCount-1;j++){
+				if(loadDataMatch[j].compareTo(loadDataMatch[j+1],num)>0){
+					if (decreasingFlag)
+						matchSwap(j,j+1);
+				}else if (loadDataMatch[j].compareTo(loadDataMatch[j+1],num)<0){
+					if (!decreasingFlag)
+						matchSwap(j,j+1);
+				}
+			}
+		}
+	}
+	public void matchSwap(int i,int j){
+		LoadData tmp=loadDataMatch[i];
+		loadDataMatch[i]=loadDataMatch[j];
+		loadDataMatch[j]=tmp;
+	}
+	
 }

@@ -1,4 +1,4 @@
-package FrameComponent;
+package Main;
 
 import java.awt.CardLayout;
 import java.awt.Component;
@@ -16,7 +16,8 @@ import javax.swing.JPanel;
 import Demand.Demand;
 import Estimate.Estimate;
 import Estimate.EstimateLoad;
-import Main.Main;
+import FrameComponent.FrameLabel;
+import FrameComponent.ViewManager;
 import Output.PdfSave;
 
 public class Function {
@@ -39,6 +40,7 @@ public class Function {
 
 	public void save(){
 		String fileName=estimateLoad.saveFile(frameLabel.getFileNameStr());
+		viewManager.getDemandView().addDemand();
 		frameLabel.setFileName(fileName);
 	}
 

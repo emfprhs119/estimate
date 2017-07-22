@@ -2,8 +2,9 @@ package Demand;
 
 import javax.swing.JOptionPane;
 
+
 class DemandList {
-	private Demand[] demands;
+	private Demand[] demandArr;
 	private Demand[] demandMatch;
 	private String match;
 	private int maxSize;
@@ -12,7 +13,7 @@ class DemandList {
 
 	DemandList() {
 		maxSize = 100;
-		demands = new Demand[maxSize];
+		demandArr = new Demand[maxSize];
 		demandMatch = new Demand[maxSize];
 		count = 0;
 		matchCount = 0;
@@ -21,8 +22,8 @@ class DemandList {
 	public int getMatchCount() {
 		matchCount = 0;
 		for (int i = 0; i < count; i++) {
-			if (demands[i].getName().matches(".*" + match + ".*")) {
-				addMatch(demands[i]);
+			if (demandArr[i].getName().matches(".*" + match + ".*")) {
+				addMatch(demandArr[i]);
 			}
 		}
 		return matchCount;
@@ -38,25 +39,25 @@ class DemandList {
 
 	boolean addList(Demand demand) {
 		if (demand.getName().equals(null) || demand.getName().trim().equals("")){
-			JOptionPane.showMessageDialog(null, "이름을 적어주세요.");
+			JOptionPane.showMessageDialog(null, "상호를 적어주세요.");
 			return false;
 		}
 		if (isHas(demand))
 			return true;
 		if (count == maxSize)
 			resize();
-		this.demands[count++] = demand;
+		this.demandArr[count++] = demand;
 		return true;
 	}
 	public void removeList(int selet) {
 		for (int i=selet;i<count-1;i++){
-			demands[i]=demands[i+1];
+			demandArr[i]=demandArr[i+1];
 		}
 		count--;
 	}
 	boolean isHas(Demand demand){
 		for(int i=0;i<count;i++){
-			if (demands[i].equals(demand))
+			if (demandArr[i].equals(demand))
 				return true;
 		}
 		return false;
@@ -66,14 +67,14 @@ class DemandList {
 		demandMatch = new Demand[maxSize];
 		Demand temp[] = new Demand[maxSize];
 		for (int i = 0; i < maxSize / 2; i++)
-			temp[i] = demands[i];
-		demands = temp;
+			temp[i] = demandArr[i];
+		demandArr = temp;
 	}
 
 
 
 	public void setList(DemandList loadList) {
-		this.demands=loadList.demands;
+		this.demandArr=loadList.demandArr;
 		this.maxSize=loadList.maxSize;
 		this.count=loadList.count;
 	}
@@ -84,6 +85,25 @@ class DemandList {
 		return count;
 	}
 	public Demand getDemand(int index) {
-		return demands[index];
+		return demandArr[index];
+	}
+	
+	public void matchSort(int num,boolean decreasingFlag) {
+		for(int i=0;i<matchCount-1;i++){
+			for(int j=0;j<matchCount-1;j++){
+				if(demandMatch[j].compareTo(demandMatch[j+1],num)>0){
+					if (decreasingFlag)
+						matchSwap(j,j+1);
+				}else if (demandMatch[j].compareTo(demandMatch[j+1],num)<0){
+					if (!decreasingFlag)
+						matchSwap(j,j+1);
+				}
+			}
+		}
+	}
+	public void matchSwap(int i,int j){
+		Demand tmp=demandMatch[i];
+		demandMatch[i]=demandMatch[j];
+		demandMatch[j]=tmp;
 	}
 }

@@ -67,14 +67,13 @@ public class DemandView extends WhitePanel {
 		rightTextPanel[2].add(rightTextField[2] = new JTextField(14));
 		rightTextPanel[3].add(rightTextField[3] = new JTextField(14));
 		
-		demandLoadButton = new JButton(new ImageIcon("forder.png"));
+		demandLoadButton = new JButton("...");
 		demandLoadButton.setBounds(181,1,28,25);
 		demandLoadButton.setPreferredSize(new Dimension(28, 25));
 		
 		
 		demandLoadButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				demandLoad.tableUpdate();
 				demandLoad.setVisible(true);
 			}
 		});
@@ -136,7 +135,9 @@ public class DemandView extends WhitePanel {
 		this.repaint();
 	}
 
-	
+	public void addDemand(){
+		demandLoad.addDemand(getDemand());
+	}
 }
 class DateFormatter extends AbstractFormatter {
 

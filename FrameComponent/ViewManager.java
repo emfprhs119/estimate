@@ -9,7 +9,7 @@ import Product.ProductView;
 import Supply.SupplyView;
 
 public class ViewManager {
-	protected DemandView getDemandView() {
+	public DemandView getDemandView() {
 		return demandView;
 	}
 	protected SupplyView getSupplyView() {

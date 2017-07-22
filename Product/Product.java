@@ -99,9 +99,9 @@ public class Product {
 	public Product(String[] stn) {
 		name = stn[0];
 		standard = stn[1];
-		materialCost = Long.parseLong(stn[2]==""?"0":stn[2]);
-		processedCost = Long.parseLong(stn[3]==""?"0":stn[3]);
-		count = Long.parseLong(stn[4]==""?"0":stn[4]);
+		materialCost = Long.parseLong(stn[2]==""?"0":Main.stringToLongString(stn[2]));
+		processedCost = Long.parseLong(stn[3]==""?"0":Main.stringToLongString(stn[3]));
+		count = Long.parseLong(stn[4]==""?"0":Main.stringToLongString(stn[4]));
 		etc = stn[5];
 	}
 

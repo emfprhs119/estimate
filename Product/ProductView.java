@@ -137,7 +137,7 @@ public class ProductView {
 		getSumTextLabel().setFont(new Font(Main.font, Font.BOLD, 25));
 		getSumText().setFont(new Font(Main.font, Font.BOLD, 25));
 		getSumText().setHorizontalAlignment(JTextField.RIGHT);
-		getSumText().setBackground(Main.color);
+		getSumText().setBackground(Main.YELLOW);
 		getSumText().setBounds(132, 257, 220, 30);
 
 		getSumBlankField().setBackground(Color.white);
@@ -151,7 +151,7 @@ public class ProductView {
 
 		getSumTextBottom().setFont(new Font(Main.font, Font.BOLD, Main.fontSize));
 		getSumTextBottom().setHorizontalAlignment(JTextField.RIGHT);
-		getSumTextBottom().setBackground(Main.color);
+		getSumTextBottom().setBackground(Main.YELLOW);
 		getSumTextBottom().setBounds(639, 861, 87, 35);
 	}
 
@@ -540,7 +540,7 @@ public class ProductView {
 	public void setProductList(ProductList productList) {
 		this.productList = productList;
 		productList.dataToTable(frontTable, 0);
-		maxPage = (productList.getMaxSize() - Main.FrontRow - 1) / Main.BackRow + 1;
+		maxPage = (productList.getMaxSize() - Main.FrontRow) / Main.BackRow + 1;
 		currPage = 1;
 	}
 
@@ -561,7 +561,7 @@ class OneCellRenderer extends DefaultTableCellRenderer {
 		comp.setBackground(Color.white);
 		comp.setFont(new Font(font, Font.BOLD, size));
 		if (column == 6) { // 공급가액
-			comp.setBackground(Main.color);
+			comp.setBackground(Main.YELLOW);
 		}
 		comp.setFont(new Font(font, Font.BOLD, size));
 		return comp;

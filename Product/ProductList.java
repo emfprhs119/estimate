@@ -7,15 +7,15 @@ import Main.Main;
 public class ProductList {
 	// 테이블 리스트 관리
 	private int maxSize;
-	Product[] products;
+	Product[] productArr;
 	private int size = 0;
 	private Product copyProduct;
 	// 초기화
 	public ProductList() {
 		maxSize = Main.FrontRow+1;// front page count
-		products = new Product[maxSize];
+		productArr = new Product[maxSize];
 		for (int i = 0; i < maxSize; i++) {
-			products[i] = new Product();
+			productArr[i] = new Product();
 		}
 	}
 
@@ -26,34 +26,34 @@ public class ProductList {
 		Product temp[] = new Product[maxSize];
 		for (int i = 0; i < maxSize; i++) {
 			if (i < (maxSize < prevSize ? maxSize : prevSize))
-				temp[i] = products[i];
+				temp[i] = productArr[i];
 			else
 				temp[i] = new Product();
 		}
-		products = temp;
+		productArr = temp;
 	}
 
 	// table to list
 	void tableToData(JTable table, int index) {
 		for (int i = index; i < index + table.getRowCount(); i++) {
-			products[i].setName((String) table.getValueAt(i - index, 0));
-			products[i].setStandard((String) table.getValueAt(i - index, 1));
-			products[i].setMaterialCost((String) table.getValueAt(i - index, 2));
-			products[i].setProcessedCost((String)table.getValueAt(i - index, 3));
-			products[i].setCount((String)table.getValueAt(i - index, 4));
-			products[i].setEtc((String) table.getValueAt(i - index, 7));
+			productArr[i].setName((String) table.getValueAt(i - index, 0));
+			productArr[i].setStandard((String) table.getValueAt(i - index, 1));
+			productArr[i].setMaterialCost((String) table.getValueAt(i - index, 2));
+			productArr[i].setProcessedCost((String)table.getValueAt(i - index, 3));
+			productArr[i].setCount((String)table.getValueAt(i - index, 4));
+			productArr[i].setEtc((String) table.getValueAt(i - index, 7));
 		}
 	}
 
 	// data to table
 	void dataToTable(JTable table, int index) {
 		for (int i = 0; i < table.getRowCount(); i++) {
-			table.setValueAt(products[i + index].getName(), i, 0);
-			table.setValueAt(products[i + index].getStandard(), i, 1);
-			table.setValueAt(products[i + index].getMaterialCost(), i, 2);
-			table.setValueAt(products[i + index].getProcessedCost(), i, 3);
-			table.setValueAt(products[i + index].getCount(), i, 4);
-			table.setValueAt(products[i + index].getEtc(), i, 7);
+			table.setValueAt(productArr[i + index].getName(), i, 0);
+			table.setValueAt(productArr[i + index].getStandard(), i, 1);
+			table.setValueAt(productArr[i + index].getMaterialCost(), i, 2);
+			table.setValueAt(productArr[i + index].getProcessedCost(), i, 3);
+			table.setValueAt(productArr[i + index].getCount(), i, 4);
+			table.setValueAt(productArr[i + index].getEtc(), i, 7);
 		}
 	}
 
@@ -61,7 +61,7 @@ public class ProductList {
 	public long getSumMoney() {
 		long sumMoney = 0;
 		for (int i = 0; i < maxSize; i++) {
-			sumMoney += products[i].getSumMoney();
+			sumMoney += productArr[i].getSumMoney();
 		}
 		return sumMoney;
 	}
@@ -73,9 +73,9 @@ public class ProductList {
 
 	public void removePage() {
 		if (maxSize == Main.FrontRow + 1) {
-			products = new Product[maxSize];
+			productArr = new Product[maxSize];
 			for (int i = 0; i < maxSize; i++) {
-				products[i] = new Product();
+				productArr[i] = new Product();
 			}
 		} else
 			resize(maxSize - Main.BackRow);
@@ -84,22 +84,22 @@ public class ProductList {
 
 	public void addRow(int index) {
 		for (int i = maxSize - 1; i > index; i--) {
-			products[i] = products[i - 1];
+			productArr[i] = productArr[i - 1];
 		}
-		products[index] = new Product();
+		productArr[index] = new Product();
 	}
 
 	public void removeRow(int index) {
 		for (int i = index; i < maxSize - 1; i++) {
-			products[i] = products[i + 1];
+			productArr[i] = productArr[i + 1];
 		}
 	}
 	public void copyRow(int index) {
-		this.copyProduct=products[index];
+		this.copyProduct=productArr[index];
 	}
 	public void pasteRow(int index) {
 		addRow(index);
-		products[index].setProduct(copyProduct);
+		productArr[index].setProduct(copyProduct);
 	}
 	public void shiftUpRow(int index){
 		if(index>1)
@@ -110,9 +110,9 @@ public class ProductList {
 			swapProductRow(index,index+1);
 	}
 	private void swapProductRow(int index1, int index2) {
-		Product product=products[index1];
-		products[index1]=products[index2];
-		products[index2]=product;
+		Product product=productArr[index1];
+		productArr[index1]=productArr[index2];
+		productArr[index2]=product;
 	}
 
 	// ----------------------------------------
@@ -121,26 +121,28 @@ public class ProductList {
 		if (size>=maxSize){
 			resize(maxSize+Main.BackRow);
 		}
-		products[size]=new Product(stn);
+		productArr[size]=new Product(stn);
 		
 		size++;
 	}
 
 	public int getMaxSize() {
-		return maxSize;
+		return maxSize-1;	//여분 1 제거
 	}
 	public Product getProduct(int index){
-		return products[index];
+		if (productArr[index]==null)
+			return new Product();
+		return productArr[index];
 	}
 
 	public void setData(String paste, int selectedRow, int selectedColumn) {
 		switch(selectedColumn){
-		case 0:products[selectedRow].setName(paste);break;
-		case 1:products[selectedRow].setStandard(paste);break;
-		case 2:products[selectedRow].setMaterialCost(paste);break;
-		case 3:products[selectedRow].setProcessedCost(paste);break;
-		case 4:products[selectedRow].setCount(paste);break;
-		case 7:products[selectedRow].setEtc(paste);break;
+		case 0:productArr[selectedRow].setName(paste);break;
+		case 1:productArr[selectedRow].setStandard(paste);break;
+		case 2:productArr[selectedRow].setMaterialCost(paste);break;
+		case 3:productArr[selectedRow].setProcessedCost(paste);break;
+		case 4:productArr[selectedRow].setCount(paste);break;
+		case 7:productArr[selectedRow].setEtc(paste);break;
 		}
 	}
 

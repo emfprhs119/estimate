@@ -21,6 +21,8 @@ class DemandAdd extends JFrame {
 	DemandAdd(DemandLoad demandLoad) {
 		setLayout(null);
 		setBounds(500, 500, 235, 170);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		setResizable(false);
 		WhitePanel leftPanel = new WhitePanel();
 		WhitePanel rightPanel = new WhitePanel();
 		leftPanel.setLayout(null);

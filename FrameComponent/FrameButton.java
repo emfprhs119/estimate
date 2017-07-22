@@ -5,6 +5,7 @@ import java.awt.Container;
 import java.awt.Font;
 
 import Main.Main;
+import Main.MenuAction;
 
 public class FrameButton {
 	private Button button[];
@@ -12,7 +13,7 @@ public class FrameButton {
 		button = new Button[7];
 		button[0] = new Button("내보내기");
 		button[0].setBounds(620, 925, 140, 45);
-		button[1] = new Button("저장");
+		button[1] = new Button("저장하기");
 		button[1].setBounds(480, 925, 120, 45);
 		button[2] = new Button("불러오기");
 		button[2].setBounds(310, 925, 150, 45);

@@ -1,4 +1,5 @@
 package FrameComponent;
+import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -19,7 +20,9 @@ import javax.swing.JPanel;
 
 import Demand.DemandView;
 import Estimate.Estimate;
+import Main.Function;
 import Main.Main;
+import Main.MenuAction;
 import Product.ProductView;
 import Supply.SupplyView;
 
@@ -31,6 +34,7 @@ public class MainFrame extends JFrame {
 		setBounds(200, 0, 838, 1045);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		// setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setResizable(false);
 		contentPane = this.getContentPane();
 		contentPane.setLayout(null);
 		contentPane.setBackground(Color.WHITE);
@@ -51,7 +55,8 @@ public class MainFrame extends JFrame {
 		action = new MenuAction(this,function,true);
 		FrameButton frameButton = new FrameButton(action);
 		action = new MenuAction(this,function,false);
-		FrameMenuBar frameMenuBar =new FrameMenuBar(action);
+		FrameMenuBar menuBar =new FrameMenuBar(action);
+		FrameToolBar toolBar =new FrameToolBar(action);
 		//-----전면 패널-------------------------------
 		frontPanel.add(viewManager.getProductView().getSumTextLabel());	//전면에만 있는 합계금액 레이블
 		frontPanel.add(viewManager.getProductView().getSumText());	//전면에만 있는 합계금액
@@ -81,8 +86,7 @@ public class MainFrame extends JFrame {
 		contentPane.add(masterPanel);
 		
 		//메뉴바
-		setMenuBar(frameMenuBar.getMenuBar()); // frame에 메뉴바 등록
-		
+		setMenuBar(menuBar.getMenuBar()); // frame에 메뉴바 등록
 		//창 닫기시 변경내용 저장여부 확인
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
@@ -109,41 +113,6 @@ public class MainFrame extends JFrame {
 	
 	
 }
-/*
-class ActionButton implements ActionListener {
-	Function function;
-	ActionButton(Function function){
-		this.function=function;
-	}
-	public void actionPerformed(ActionEvent e) {
-		if (((Button) e.getSource()).getLabel().equals("저장")) {
-			function.save();
-		}
-		if (((Button) e.getSource()).getLabel().equals("내보내기")) {
-			function.pdfSave();
-		}
-		if (((Button) e.getSource()).getLabel().equals("불러오기")) {
-			function.load();
-		}
-		if (((Button) e.getSource()).getLabel().equals("◀")) {
-			function.leftPage();
-		}
-		if (((Button) e.getSource()).getLabel().equals("▶")) {
-			function.rightPage();
-		}
-		if (((Button) e.getSource()).getLabel().equals("추가")) {
-			function.addPage();
-		}
-		if (((Button) e.getSource()).getLabel().equals("제거")) {
-			function.removePage();
-		}
-		if (((Button) e.getSource()).getLabel().equals("정렬")) {
-			//func.sort();
-		}
-	}
-}
-*/
-
 
 
 

@@ -1,4 +1,4 @@
-package FrameComponent;
+package Main;
 
 import java.awt.Button;
 import java.awt.MenuItem;
@@ -9,13 +9,13 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import Estimate.Estimate;
-import Main.Main;
+import FrameComponent.MainFrame;
 
 public class MenuAction implements ActionListener {
 	JFrame frame;
 	Function function;
 	boolean isButton;
-	MenuAction(JFrame frame,Function function,boolean isButton){
+	public MenuAction(JFrame frame,Function function,boolean isButton){
 		this.frame=frame;
 		this.function=function;
 		this.isButton=isButton;
@@ -48,6 +48,12 @@ public class MenuAction implements ActionListener {
 				frame.setVisible(false);
 			}
 			break;
+		case "추가":
+			function.addPage();
+			break;
+		case "제거":
+			function.removePage();
+			break;
 		case "불러오기":
 			function.load();
 			break;
@@ -61,6 +67,7 @@ public class MenuAction implements ActionListener {
 			function.rightPage();
 			break;
 		case "Pdf 내보내기":
+		case "내보내기":
 			function.pdfSave();
 			break;
 		case "종료":

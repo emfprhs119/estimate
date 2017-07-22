@@ -4,6 +4,8 @@ import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
 
+import Main.MenuAction;
+
 public class FrameMenuBar {
 	private MenuBar menuBar;
 	public FrameMenuBar(MenuAction action) {
