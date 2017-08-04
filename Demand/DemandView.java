@@ -12,7 +12,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Properties;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.JLabel;
@@ -28,20 +27,26 @@ import FrameComponent.WhitePanel;
 import Main.Main;
 
 
-
+//°Å·¡Ã³ view
 public class DemandView extends WhitePanel {
 	WhitePanel leftPanel, rightPanel;
 	JPanel rightTextPanel[];
 	JPanel leftLabelPanel[];
 	JTextField rightTextField[];
 	DemandLoad demandLoad;
-	UtilDateModel model = new UtilDateModel();
-	JDatePanelImpl datePanel = new JDatePanelImpl(model, new Properties());
-	JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateFormatter());
-	JButton demandLoadButton;
+	UtilDateModel model;
+	JButton demandLoadButton; 
 
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	public DemandView(ViewManager viewManager) {
+		model = new UtilDateModel();
+		Properties p = new Properties();
+		p.put("text.today", "Today");
+		p.put("text.month", "Month");
+		p.put("text.year", "Year");
+		JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
+		JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateFormatter());
+		
 		setBounds(0, 124, 350, 290);
 		demandLoad = new DemandLoad(viewManager);
 		leftPanel = new WhitePanel();

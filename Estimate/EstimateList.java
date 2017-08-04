@@ -3,7 +3,7 @@ package Estimate;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
+//견적서 리스트
 class EstimateList {
 	private LoadData[] loadDataArr;
 	private LoadData[] loadDataMatch;
@@ -11,7 +11,7 @@ class EstimateList {
 	private int count;
 	private int matchCount;
 
-	private String match, item;
+	private String match;
 	private Date after, curr, before;
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -21,7 +21,6 @@ class EstimateList {
 		loadDataMatch = new LoadData[maxSize];
 		count = 0;
 		match = "";
-		item = "";
 		matchCount = 0;
 	}
 
@@ -32,7 +31,6 @@ class EstimateList {
 
 	public void setMatchStr(String comp, String item) {
 		this.match = comp;
-		this.item = item;
 	}
 
 	boolean addList(LoadData loadData) {

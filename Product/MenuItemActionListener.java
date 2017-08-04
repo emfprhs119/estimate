@@ -19,7 +19,6 @@ class MenuItemActionListener implements ActionListener {
 
 	}
 
-	// 미구현
 	public void actionPerformed(ActionEvent e) {
 		if (((MenuItem) e.getSource()).getLabel() == "행 추가 (ctrl+shift+a)") {
 			productList.addRow(table.getSelectedRow());

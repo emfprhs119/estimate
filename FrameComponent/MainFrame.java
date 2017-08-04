@@ -1,30 +1,14 @@
 package FrameComponent;
-import java.awt.BorderLayout;
 import java.awt.Button;
-import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Menu;
-import java.awt.MenuBar;
-import java.awt.MenuItem;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
-import Demand.DemandView;
-import Estimate.Estimate;
 import Main.Function;
 import Main.Main;
 import Main.MenuAction;
-import Product.ProductView;
-import Supply.SupplyView;
 
 public class MainFrame extends JFrame {
 	private Container contentPane;
@@ -42,13 +26,13 @@ public class MainFrame extends JFrame {
 	public MainFrame() {
 		super("견적서");
 		//이름,파일,페이지 레이블 초기화
-		FrameLabel frameLabel = new FrameLabel();
+		FrameLabel frameLabel = new FrameLabel(this);
 		
 		WhitePanel masterPanel = new WhitePanel();			//전후면 포함 패널
 		WhiteRectPanel frontPanel= new WhiteRectPanel();	//전면 패널
 		WhiteRectPanel backPanel = new WhiteRectPanel();	//후면 패널
 		
-		ViewManager viewManager = new ViewManager(contentPane,masterPanel);	//뷰 관리
+		ViewManager viewManager = new ViewManager(contentPane,masterPanel,frameLabel);	//뷰 관리
 		//function 클래스 생성
 		function = new Function(viewManager,frameLabel);
 		MenuAction action;
@@ -56,7 +40,6 @@ public class MainFrame extends JFrame {
 		FrameButton frameButton = new FrameButton(action);
 		action = new MenuAction(this,function,false);
 		FrameMenuBar menuBar =new FrameMenuBar(action);
-		FrameToolBar toolBar =new FrameToolBar(action);
 		//-----전면 패널-------------------------------
 		frontPanel.add(viewManager.getProductView().getSumTextLabel());	//전면에만 있는 합계금액 레이블
 		frontPanel.add(viewManager.getProductView().getSumText());	//전면에만 있는 합계금액

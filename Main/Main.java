@@ -1,13 +1,6 @@
 package Main;
 import java.awt.Color;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.Scanner;
-
-import Estimate.Estimate;
 import FrameComponent.MainFrame;
 
 
@@ -22,14 +15,14 @@ public class Main {
 	public static void main(String[] args) {
 		new MainFrame();
 	}
-	
+	// long to #,### transform
 	public static String longToMoneyString(long num) {
 		if (num == 0)
 			return "0";
 		DecimalFormat df = new DecimalFormat("#,###");
 		return df.format(num);
 	}
-
+	// String to longString format transform
 	public static String stringToLongString(Object object) {
 		if (object == null)
 			return null;
@@ -41,7 +34,7 @@ public class Main {
 			return null;
 		}
 	}
-
+	// String to long
 	public static long StringToLong(Object obj) {
 		if (obj == null)
 			return 0;
@@ -53,7 +46,7 @@ public class Main {
 			return 0;
 		}
 	}
-	
+	// if null to '-'  if contain , to both side " " 
 	public static String checkString(String str){
 		if (str==null || str.replace(" ","").equals(""))
 			return "-";

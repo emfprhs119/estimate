@@ -84,9 +84,9 @@ public class SupplyView extends WhitePanel{
 	
 	void loadSupply() {
 		BufferedReader fr = null;
-		String st;
+		String st = null;
 		try {
-			fr = new BufferedReader(new FileReader("supply.csv"));
+			fr = new BufferedReader(new FileReader("./supply.csv"));
 				for (int i = 0; i < 8; i++) {
 					st = fr.readLine();
 					String stn[] = CsvPasser.csvSplit(st);

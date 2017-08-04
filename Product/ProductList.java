@@ -3,7 +3,7 @@ package Product;
 import javax.swing.JTable;
 
 import Main.Main;
-
+//품목 리스트
 public class ProductList {
 	// 테이블 리스트 관리
 	private int maxSize;
@@ -12,7 +12,7 @@ public class ProductList {
 	private Product copyProduct;
 	// 초기화
 	public ProductList() {
-		maxSize = Main.FrontRow+1;// front page count
+		maxSize = Main.FrontRow;// front page count
 		productArr = new Product[maxSize];
 		for (int i = 0; i < maxSize; i++) {
 			productArr[i] = new Product();
@@ -25,7 +25,7 @@ public class ProductList {
 		maxSize = size;
 		Product temp[] = new Product[maxSize];
 		for (int i = 0; i < maxSize; i++) {
-			if (i < (maxSize < prevSize ? maxSize : prevSize))
+			if (i < (maxSize < prevSize ? maxSize-1 : prevSize))
 				temp[i] = productArr[i];
 			else
 				temp[i] = new Product();
@@ -65,50 +65,72 @@ public class ProductList {
 		}
 		return sumMoney;
 	}
-
+	//----------------------------------------
 	// --------리스트 조작-----------------------
+	//----------------------------------------
 	public void addPage() {
 		resize(maxSize + Main.BackRow);
 	}
-
-	public void removePage() {
-		if (maxSize == Main.FrontRow + 1) {
-			productArr = new Product[maxSize];
-			for (int i = 0; i < maxSize; i++) {
-				productArr[i] = new Product();
-			}
-		} else
-			resize(maxSize - Main.BackRow);
-
+	public void removePage(){
+		resize(maxSize - Main.BackRow);
 	}
-
+	// 데이터가 비어있을경우 true
+	public boolean isBlankLastPage() {
+		boolean flag=true;
+		if (maxSize==Main.FrontRow)
+			return false;
+		for (int i = maxSize-1; i >= maxSize-Main.BackRow-1; i--) {
+			if (!productArr[i].isNull()){
+				flag=false;
+			}
+		}
+		return flag;
+	}
+	// 행 추가 (마지막 페이지의 마지막행에 데이터가 있을경우 addPage())
 	public void addRow(int index) {
 		for (int i = maxSize - 1; i > index; i--) {
+			if (i==maxSize-1 && !productArr[i].isNull()){
+				addPage();
+				productArr[i+1] = productArr[i];
+			}
 			productArr[i] = productArr[i - 1];
 		}
 		productArr[index] = new Product();
 	}
-
+	// 행 제거 (마지막 페이지에 데이터가 없을경우 removePage())
 	public void removeRow(int index) {
-		for (int i = index; i < maxSize - 1; i++) {
+		for (int i = index; i < maxSize - 2; i++) {
 			productArr[i] = productArr[i + 1];
 		}
+		productArr[maxSize-1]=new Product();
+		if (isBlankLastPage()){
+			removePage();
+		}
 	}
+	// 행 복사
 	public void copyRow(int index) {
 		this.copyProduct=productArr[index];
 	}
+	// 행 붙여넣기
 	public void pasteRow(int index) {
 		addRow(index);
 		productArr[index].setProduct(copyProduct);
 	}
+	// 행 위로 이동
 	public void shiftUpRow(int index){
-		if(index>1)
+		if(index>0)
 			swapProductRow(index-1,index);
 	}
+	// 행 아래로 이동
 	public void shiftDownRow(int index){
 		if(index<maxSize-1)
 			swapProductRow(index,index+1);
+		else{
+			addPage();
+			swapProductRow(index,index+1);
+		}
 	}
+	// 행 간 교환
 	private void swapProductRow(int index1, int index2) {
 		Product product=productArr[index1];
 		productArr[index1]=productArr[index2];
@@ -116,7 +138,7 @@ public class ProductList {
 	}
 
 	// ----------------------------------------
-
+	// 물품 추가
 	public void addProduct(String[] stn) {
 		if (size>=maxSize){
 			resize(maxSize+Main.BackRow);
@@ -127,7 +149,7 @@ public class ProductList {
 	}
 
 	public int getMaxSize() {
-		return maxSize-1;	//여분 1 제거
+		return maxSize;
 	}
 	public Product getProduct(int index){
 		if (productArr[index]==null)

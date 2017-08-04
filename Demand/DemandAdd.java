@@ -15,10 +15,11 @@ import javax.swing.JTextField;
 
 import FrameComponent.WhitePanel;
 import Main.Main;
-
+//거래처 추가
 class DemandAdd extends JFrame {
 	JTextField textField[];
 	DemandAdd(DemandLoad demandLoad) {
+		super("거래처 수가하기");
 		setLayout(null);
 		setBounds(500, 500, 235, 170);
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);

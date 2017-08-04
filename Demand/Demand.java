@@ -1,52 +1,10 @@
 package Demand;
-
+// 거래처
 public class Demand {
-
-	public String getDate() {
-		return date;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public String getTel() {
-		return tel;
-	}
-
-	public String getWho() {
-		return who;
-	}
-
-	public void setDate(String date) {
-		this.date = date;
-	}
-
-	public void setTel(String tel) {
-		this.tel = tel;
-	}
-
-	public void setWho(String who) {
-		this.who = who;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String[] getStrings() {
-		String stn[] = new String[4];
-		stn[0] = date;
-		stn[1] = name;
-		stn[2] = tel;
-		stn[3] = who;
-		return stn;
-	}
-
-	private String date;
-	private String name;
-	private String tel;
-	private String who;
+	private String date;	// 날짜
+	private String name;	// 상호
+	private String tel;		// 전화번호
+	private String who;		// 담당자
 
 	public Demand() {
 	}
@@ -94,6 +52,46 @@ public class Demand {
 		}
 		
 		return 0;
+	}
+
+	public String[] getStrings() {
+		String stn[] = new String[4];
+		stn[0] = date;
+		stn[1] = name;
+		stn[2] = tel;
+		stn[3] = who;
+		return stn;
+	}
+	public String getDate() {
+		return date;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getTel() {
+		return tel;
+	}
+
+	public String getWho() {
+		return who;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
+
+	public void setTel(String tel) {
+		this.tel = tel;
+	}
+
+	public void setWho(String who) {
+		this.who = who;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }

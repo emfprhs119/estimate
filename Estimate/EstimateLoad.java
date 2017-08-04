@@ -15,12 +15,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Properties;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -29,11 +25,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import javax.swing.text.DateFormatter;
 
 import org.jdatepicker.impl.JDatePanelImpl;
@@ -45,9 +37,7 @@ import FrameComponent.FrameLabel;
 import FrameComponent.ViewManager;
 import Main.CsvPasser;
 import Main.Main;
-import Product.ProductView;
-import Supply.Supply;
-
+//견적서 불러오기
 public class EstimateLoad extends JFrame {
 	JTable table;
 	JPanel panel;
@@ -57,14 +47,15 @@ public class EstimateLoad extends JFrame {
 	JLabel page;
 	EstimateList estimateList;
 	Object row[][];
-
+	Object column[];
+	
 	JLabel searchLabel;
 
 	JTextField searchCompField;
 	JLabel searchCompLabel;
 	JTextField searchItemField;
 	JLabel searchItemLabel;
-	JButton searchButton;
+	Button searchButton;
 
 	UtilDateModel model = new UtilDateModel();
 	JDatePanelImpl datePanel = new JDatePanelImpl(model, new Properties());
@@ -74,6 +65,7 @@ public class EstimateLoad extends JFrame {
 	JDatePickerImpl datePicker2 = new JDatePickerImpl(datePanel2, new DateFormatter());
 
 	public EstimateLoad(ViewManager viewManager, FrameLabel frameLabel) {
+		super("견적서 불러오기");
 		this.viewManager = viewManager;
 		this.frameLabel = frameLabel;
 		estimateList = new EstimateList();
@@ -82,7 +74,7 @@ public class EstimateLoad extends JFrame {
 		setLayout(null);
 		setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 		setResizable(false);
-		searchInit();
+		//searchInit();
 		buttonInit();
 		tableInit();
 		add(panel);
@@ -137,7 +129,7 @@ public class EstimateLoad extends JFrame {
 		searchLabel = new JLabel("기간");
 		searchLabel.setBounds(40, 0, 40, 30);
 		add(searchLabel);
-		searchButton = new JButton("reset");
+		searchButton = new Button("reset");
 		searchButton.setFont(new Font(Main.font, 0, 10));
 		searchButton.setBounds(90, 5, 30, 18);
 		add(searchButton);
@@ -171,7 +163,7 @@ public class EstimateLoad extends JFrame {
 		searchCompLabel = new JLabel("상호");
 		searchItemLabel = new JLabel("물품");
 
-		searchButton = new JButton("검색");
+		searchButton = new Button("검색");
 		searchButton.setFont(new Font(Main.font, 0, 10));
 
 		searchCompField.addKeyListener(new KeyAdapter() {
@@ -211,7 +203,7 @@ public class EstimateLoad extends JFrame {
 
 	void tableInit() {
 		row = new Object[0][3];
-		Object column[] = { "견적일", "상호", "No." };
+		column = new Object[]{ "견적일", "상호", "No." };
 
 		DefaultTableModel model = new DefaultTableModel((Object[][]) row, column) {
 			public boolean isCellEditable(int row, int col) {
@@ -265,8 +257,8 @@ public class EstimateLoad extends JFrame {
 		});
 
 		JScrollPane scroll = new JScrollPane(table);
-		scroll.setPreferredSize(new Dimension(330, 500));
-		panel.setBounds(3, 100, 330, 800);
+		scroll.setPreferredSize(new Dimension(330, 570));
+		panel.setBounds(3, 3, 330, 570);
 		panel.add(scroll);
 	}
 
@@ -280,7 +272,7 @@ public class EstimateLoad extends JFrame {
 
 	public void tableUpdate() {
 		estimateList.setList(loadList());
-		estimateList.setMatchStr(searchCompField.getText(), searchItemField.getText());
+		//estimateList.setMatchStr(searchCompField.getText(), searchItemField.getText());
 		if (estimateList.getMatchCount() == 0)
 			return;
 		tableSet(estimateList.getMatchCount());
@@ -293,7 +285,6 @@ public class EstimateLoad extends JFrame {
 
 	private void tableSet(int n) {
 		row = new Object[n][3];
-		Object column[] = { "견적일", "상호", "No." };
 
 		DefaultTableModel model = new DefaultTableModel((Object[][]) row, column) {
 			public boolean isCellEditable(int row, int col) {
@@ -310,6 +301,8 @@ public class EstimateLoad extends JFrame {
 		File dirFile = new File("save/");
 		File[] fileList = dirFile.listFiles();
 		estimateList = new EstimateList();
+		if (fileList==null)
+			return estimateList;
 		for (File tempFile : fileList) {
 			if (tempFile.isFile()) {
 				String tmpName = tempFile.getName();

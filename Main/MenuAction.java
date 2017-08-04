@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import Estimate.Estimate;
 import FrameComponent.MainFrame;
 
 public class MenuAction implements ActionListener {
@@ -22,10 +21,12 @@ public class MenuAction implements ActionListener {
 	}
 	public void actionPerformed(ActionEvent e) {
 		String str;
+		// 버튼 일경우 버튼의 라벨 메뉴 일경우 메뉴의 라벨 
 		if (isButton)
 			str= ((Button) e.getSource()).getLabel();
 		else
 			str = ((MenuItem) e.getSource()).getLabel();
+		// 이름에 따른 함수 호출
 		switch (str) {
 		case "새 견적서":
 			if (Main.modify) {
@@ -47,12 +48,6 @@ public class MenuAction implements ActionListener {
 				new MainFrame();
 				frame.setVisible(false);
 			}
-			break;
-		case "추가":
-			function.addPage();
-			break;
-		case "제거":
-			function.removePage();
 			break;
 		case "불러오기":
 			function.load();

@@ -26,13 +26,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
-
 import FrameComponent.ViewManager;
 import Main.CsvPasser;
 import Main.Main;
-
+// 거래처 불러오기
 public class DemandLoad extends JFrame {
 	ViewManager viewManager;
 	JTable table;
@@ -44,6 +41,7 @@ public class DemandLoad extends JFrame {
 	DemandList demandList;
 
 	public DemandLoad(ViewManager viewManager) {
+		super("거래처 불러오기");
 		this.viewManager = viewManager;
 		panel = new JPanel();
 		demandAdd = new DemandAdd(this);

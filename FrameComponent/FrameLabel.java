@@ -1,6 +1,5 @@
 package FrameComponent;
 
-import java.awt.Component;
 import java.awt.Font;
 
 import javax.swing.JLabel;
@@ -13,6 +12,7 @@ public class FrameLabel {
 	}
 	public void setFileName(String fileName) {
 		fileName=fileName.replace("견적서_", "").replace("save\\", "").replace(".csv", "");
+		mainFrame.setTitle("견적서_"+fileName);
 		this.fileName.setText("견적서_"+fileName);
 		this.fileName.setBounds(390 - fileName.length() * 5, 5, 300, 20);
 	}
@@ -28,7 +28,9 @@ public class FrameLabel {
 	private JLabel title;
 	private JLabel fileName;
 	private JLabel page;
-	FrameLabel(){
+	private MainFrame mainFrame;
+	FrameLabel(MainFrame mainFrame){
+		this.mainFrame=mainFrame;
 		title=nameInit();
 		fileName=fileInit();
 		page=pageInit();

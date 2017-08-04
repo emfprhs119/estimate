@@ -1,6 +1,15 @@
 package Supply;
-
+// 공급자
 public class Supply{
+	private String num;	// 사업자 등록번호
+	private String company;	// 상호
+	private String name;	// 대표
+	private String address;	// 주소
+	private String work;	// 업태
+	private String work2;	// 종목
+	private String tel;	// 전화
+	private String fax;	// 팩스
+	
 	public String getCompany() {
 		return company;
 	}
@@ -49,12 +58,4 @@ public class Supply{
 	public void setNum(String num) {
 		this.num = num;
 	}
-	private String num;
-	private String company;
-	private String name;
-	private String address;
-	private String work;
-	private String work2;
-	private String tel;
-	private String fax;
 }

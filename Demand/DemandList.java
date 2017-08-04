@@ -2,7 +2,7 @@ package Demand;
 
 import javax.swing.JOptionPane;
 
-
+//거리처 리스트
 class DemandList {
 	private Demand[] demandArr;
 	private Demand[] demandMatch;

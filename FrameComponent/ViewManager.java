@@ -25,12 +25,14 @@ public class ViewManager {
 	Container contentPane;
 	private WhitePanel masterPanel;
 	private CardLayout cardLayout;
-	public ViewManager(Container contentPane, WhitePanel masterPanel){
+	private FrameLabel frameLabel;
+	public ViewManager(Container contentPane, WhitePanel masterPanel, FrameLabel frameLabel){
 		this.contentPane=contentPane;
 		cardLayout=new CardLayout();
 		masterPanel.setLayout(cardLayout);
 		masterPanel.setBounds(32, 30, 800, 1000);
 		this.masterPanel=masterPanel;
+		this.frameLabel=frameLabel;
 		demandView = new DemandView(this);
 		supplyView = new SupplyView(this);
 		productView = new ProductView(this);
@@ -50,6 +52,9 @@ public class ViewManager {
 		est.setSupply(supplyView.getSupply());
 		est.setProductList(productView.getProductList());
 		return est;
+	}
+	public FrameLabel getFrameLabel(){
+		return frameLabel;
 	}
 	public void setDemand(Demand demand) {
 		demandView.setDemand(demand);

@@ -2,19 +2,13 @@ package Product;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.text.DecimalFormat;
-
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -22,14 +16,13 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import FrameComponent.ViewManager;
 import FrameComponent.WhitePanel;
 import Main.Main;
 
+//Ç°¸ñ È­¸é
 public class ProductView {
 	private int maxPage = 1; // ÀüÃ¼ ÆäÀÌÁö
 	private int currPage = 1; // ÇöÀç ÆäÀÌÁö
@@ -52,14 +45,17 @@ public class ProductView {
 	long calcData = 0; // °è»êµÈ ÇÕ°è±Ý¾×
 	String copyString = null; // º¹»ç ºÙ¿©³Ö±â¸¦ À§ÇÑ ¹®ÀÚ¿­
 
-	String funcStr[] = { "Çà Ãß°¡ (ctrl+shift+a)", "Çà Á¦°Å (ctrl+shift+d)", "Çà º¹»ç (ctrl+shift+c)", 
-			"Çà Àß¶ó³»±â (ctrl+shift+x)", "Çà ºÙ¿©³Ö±â (ctrl+shift+v)","Çà ¿Ã¸®±â (ctrl+shift+up)", "Çà ³»¸®±â (ctrl+shift+down)",
-			"¼¿ º¹»ç (ctrl+c)", "¼¿ Àß¶ó³»±â (ctrl+x)", "¼¿ ºÙ¿©³Ö±â (ctrl+v)" };
+	String funcStr[] = { "Çà Ãß°¡ (ctrl+shift+a)", "Çà Á¦°Å (ctrl+shift+d)", "Çà º¹»ç (ctrl+shift+c)", "Çà Àß¶ó³»±â (ctrl+shift+x)",
+			"Çà ºÙ¿©³Ö±â (ctrl+shift+v)", "Çà ¿Ã¸®±â (ctrl+shift+up)", "Çà ³»¸®±â (ctrl+shift+down)", "¼¿ º¹»ç (ctrl+c)",
+			"¼¿ Àß¶ó³»±â (ctrl+x)", "¼¿ ºÙ¿©³Ö±â (ctrl+v)" };
 	Clipboard clipboard;
+	ViewManager viewManager;
+
 	public ProductView(ViewManager viewManager) {
 		sumTextInit();
+		this.viewManager = viewManager;
 		productList = new ProductList();
-		clipboard=new Clipboard();
+		clipboard = new Clipboard();
 		Object frontRow[][] = new Object[Main.FrontRow][8]; // Àü¸é Å×ÀÌºí Çà·Ä
 		Object backRow[][] = new Object[Main.BackRow][8]; // ÈÄ¸é Å×ÀÌºí Çà·Ä
 		Object column[] = { "Ç°¸ñ", "±Ô°Ý", "ÀÚÀçºñ", "°¡°øºñ", "¼ö·®", "´Ü°¡", "°ø±Þ°¡¾×", "ºñ°í" };
@@ -95,21 +91,22 @@ public class ProductView {
 
 		valueChangedUpdate(frontTable);
 	}
+
 	private void popupInit(JPanel frontPanel, JPanel backPanel) {
 		MenuItem menuItem;
 		PopupMenu frontPopup = new PopupMenu();
 		PopupMenu backPopup = new PopupMenu();
 
-		MenuItemActionListener frontMenu = new MenuItemActionListener(this,frontTable);
-		MenuItemActionListener backMenu = new MenuItemActionListener(this,backTable);
-		
-		for(int i=0;i<funcStr.length;i++){
-		menuItem = new MenuItem(funcStr[i]);
-		menuItem.addActionListener(frontMenu);
-		frontPopup.add(menuItem);
-		menuItem = new MenuItem(funcStr[i]);
-		menuItem.addActionListener(backMenu);
-		backPopup.add(menuItem);
+		MenuItemActionListener frontMenu = new MenuItemActionListener(this, frontTable);
+		MenuItemActionListener backMenu = new MenuItemActionListener(this, backTable);
+
+		for (int i = 0; i < funcStr.length; i++) {
+			menuItem = new MenuItem(funcStr[i]);
+			menuItem.addActionListener(frontMenu);
+			frontPopup.add(menuItem);
+			menuItem = new MenuItem(funcStr[i]);
+			menuItem.addActionListener(backMenu);
+			backPopup.add(menuItem);
 		}
 		setPopup(frontPanel, backPanel, frontPopup, backPopup);
 	}
@@ -234,19 +231,23 @@ public class ProductView {
 			return;
 		}
 		// bottomTextField Á¶Àý
-		int len = Main.longToMoneyString(calcData).length() > 10 ? (Main.longToMoneyString(calcData).length() - 10) * 10 : 0;
+		int len = Main.longToMoneyString(calcData).length() > 10 ? (Main.longToMoneyString(calcData).length() - 10) * 10
+				: 0;
 		getSumText().setText(Main.longToMoneyString(calcData) + "¿ø");
 		getSumTextBottom().setText(Main.longToMoneyString(calcData));
 		getSumTextBottom().setBounds(639 - len, 861, 87 + len, 35);
 	}
+
 	void clipboardCopy(JTable table) { // º¹»ç
 		clipboard.copy((String) table.getValueAt(table.getSelectedRow(), table.getSelectedColumn()));
 	}
+
 	void clipboardPaste(JTable table) { // ºÙ¿©³Ö±â
-		if (table.getSelectedColumn() != 5 && table.getSelectedColumn() != 6){
+		if (table.getSelectedColumn() != 5 && table.getSelectedColumn() != 6) {
 			productList.setData(clipboard.pasteData(), table.getSelectedRow(), table.getSelectedColumn());
 		}
 	}
+
 	private void tableInit(final MyJTable table) {
 		// Å×ÀÌºí °¡·ÎÅ©±â
 		table.getColumn("Ç°¸ñ").setPreferredWidth(Main.tableSize[0]);
@@ -279,48 +280,51 @@ public class ProductView {
 		table.getTableHeader().setReorderingAllowed(false); // Çì´õ Àç¹èÄ¡ ºÒ°¡
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_NEXT_COLUMN); // °¡·Î Å©±â Á¶Àý °¡´É
 		table.setDragEnabled(false);
-		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // ÇÑ ¼¿¸¸ ¼±ÅÃ °¡´É
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // ÇÑ ¼¿¸¸ ¼±ÅÃ
+																		// °¡´É
 		table.getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "selectNextColumnCell");
 		table.getInputMap().put(KeyStroke.getKeyStroke("RIGHT"), "selectNextColumnCell");
-		
 
 		table.addKeyListener(new KeyListener() {
 			// Å° ¼¼ÆÃ
 			public void keyPressed(KeyEvent e) {
 				if ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0) {
 					if (e.getKeyCode() == KeyEvent.VK_X) { // ctrl + x Àß¶ó³»±â
-						//clipboardCopy(table);
+						clipboardCopy(table);
 						table.setValueAt(null, table.getSelectedRow(), table.getSelectedColumn());
 					}
-					if (e.getKeyCode() == KeyEvent.VK_C){ // ctrl + c º¹»ç
-						//clipboardCopy(table);
+					if (e.getKeyCode() == KeyEvent.VK_C) { // ctrl + c º¹»ç
+						clipboardCopy(table);
 					}
-					if (e.getKeyCode() == KeyEvent.VK_V){ // ctrl + v ºÙ¿©³Ö±â
+					if (e.getKeyCode() == KeyEvent.VK_V) { // ctrl + v ºÙ¿©³Ö±â
 						clipboardPaste(table);
 						tableUpdate(table);
+						
 					}
+					// ctrl + shift function
 					if ((e.getModifiers() & KeyEvent.SHIFT_MASK) != 0) {
-						if (e.getKeyCode() == KeyEvent.VK_A) { 
-							productList.addRow(table.getSelectedRow());
+						if (e.getKeyCode() == KeyEvent.VK_A) {
+							productList.addRow(table.getSelectedRow() + getIndex());
 						}
-						if (e.getKeyCode() == KeyEvent.VK_D) { 
-							productList.removeRow(table.getSelectedRow());
+						if (e.getKeyCode() == KeyEvent.VK_D) {
+							productList.removeRow(table.getSelectedRow() + getIndex());
 						}
-						if (e.getKeyCode() == KeyEvent.VK_X) { 
-							productList.copyRow(table.getSelectedRow());
-							productList.removeRow(table.getSelectedRow());
+						if (e.getKeyCode() == KeyEvent.VK_X) {
+							productList.copyRow(table.getSelectedRow() + getIndex());
+							productList.removeRow(table.getSelectedRow() + getIndex());
 						}
-						if (e.getKeyCode() == KeyEvent.VK_C){
-							productList.copyRow(table.getSelectedRow());
+						if (e.getKeyCode() == KeyEvent.VK_C) {
+							productList.copyRow(table.getSelectedRow() + getIndex());
 						}
-						if (e.getKeyCode() == KeyEvent.VK_V){
-							productList.pasteRow(table.getSelectedRow());
+						if (e.getKeyCode() == KeyEvent.VK_V) {
+							productList.pasteRow(table.getSelectedRow() + getIndex());
 						}
 						if (e.getKeyCode() == KeyEvent.VK_UP)
-							productList.shiftUpRow(table.getSelectedRow());
+							productList.shiftUpRow(table.getSelectedRow() + getIndex());
 						if (e.getKeyCode() == KeyEvent.VK_DOWN)
-							productList.shiftDownRow(table.getSelectedRow());
+							productList.shiftDownRow(table.getSelectedRow() + getIndex());
 						tableUpdate(table);
+						pageRefresh();
 					}
 				}
 				switch (e.getKeyCode()) {
@@ -338,6 +342,7 @@ public class ProductView {
 						table.setColumnSelectionInterval(7, 7);
 						table.setRowSelectionInterval(table.getSelectedRow(), table.getSelectedRow());
 					}
+					break;
 
 				case KeyEvent.VK_UP:
 				case KeyEvent.VK_DOWN:
@@ -349,11 +354,6 @@ public class ProductView {
 			}
 
 			public void keyTyped(KeyEvent e) {
-				/*
-				table.editCellAt(table.getSelectedRow(), table.getSelectedColumn());
-				Component editor = table.getEditorComponent();
-		        editor.requestFocusInWindow();
-				 */
 				Character c = e.getKeyChar();
 				// Çã¿ë ¹®ÀÚ
 				if (c.toString().matches("[^a-zA-Z0-9¤¡-¤¾¤¿-¤Ó°¡-ÆR`~!@#$%^&*()-_=+|{};:',.<>?]+")) {
@@ -362,7 +362,7 @@ public class ProductView {
 				} else if (table.isSetCellEditable(table.getSelectedRow(), table.getSelectedColumn())) {
 					keyPressed(e);
 					if (!e.isControlDown()) {
-						//System.out.println(table.get.length);
+						// System.out.println(table.get.length);
 						String s = (String) table.getValueAt(table.getSelectedRow(), table.getSelectedColumn());
 						if (table.getSelectedColumn() == 5) {
 							table.setColumnSelectionInterval(0, 0);
@@ -374,7 +374,7 @@ public class ProductView {
 						}
 						if (s == null || s == "\r\n")
 							s = "";
-						
+
 						table.setValueAt(s + e.getKeyChar(), table.getSelectedRow(), table.getSelectedColumn());
 						Main.modify = true;
 
@@ -387,13 +387,6 @@ public class ProductView {
 			public void keyReleased(KeyEvent e) {
 			}
 		});
-/*
-		cellSelectionModel.addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent e) {
-				valueChangedUpdate(table);
-			}
-		});
-		*/
 	}
 
 	// Å×ÀÌºí Å©±â Á¶Á¤ load data
@@ -475,18 +468,22 @@ public class ProductView {
 		this.sumBlankField = sumBlankField;
 	}
 
+	// ÇöÀç ÆäÀÌÁö
 	public int getCurrPage() {
 		return currPage;
 	}
 
+	// ÆäÀÌÁö ÀÌµ¿
 	public void setCurrPage(int currPage) {
 		this.currPage = currPage;
 	}
 
+	// ÃÖ´ë ÆäÀÌÁö
 	public int getMaxPage() {
 		return maxPage;
 	}
 
+	// ÃÖ´ë ÆäÀÌÁö ¼³Á¤
 	public void setMaxPage(int maxPage) {
 		this.maxPage = maxPage;
 	}
@@ -499,6 +496,7 @@ public class ProductView {
 		return backTablePanel;
 	}
 
+	// »õ·Î°íÄ§
 	public void refresh() {
 		if (currPage == 1)
 			tableUpdate(frontTable);
@@ -506,31 +504,32 @@ public class ProductView {
 			tableUpdate(backTable);
 	}
 
+	public void pageRefresh() {
+		if (productList.getMaxSize() > Main.FrontRow + (maxPage - 1) * Main.BackRow) {
+			maxPage++;
+			viewManager.getFrameLabel().setPageText(getPageStr());
+		} else if (productList.getMaxSize() < Main.FrontRow + (maxPage - 1) * Main.BackRow) {
+			maxPage--;
+			viewManager.getFrameLabel().setPageText(getPageStr());
+		}
+	}
+
 	public ProductList getProductList() {
 		return productList;
 	}
 
-	public boolean addPage() {
-		if (currPage == maxPage) {
-
-			productList.addPage();
-			currPage++;
-			maxPage++;
-			return true;
+	public void removeLastPage() {
+		if (currPage == maxPage && currPage > 1 && productList.isBlankLastPage()) {
+			productList.removePage();
+			maxPage--;
 		}
-		return false;
 	}
 
-	public boolean removePage() {
+	public void addLastPage() {
 		if (currPage == maxPage) {
-			productList.removePage();
-			if (currPage != 1) {
-				currPage--;
-				maxPage--;
-			}
-			return true;
+			productList.addPage();
+			maxPage++;
 		}
-		return false;
 	}
 
 	public String getPageStr() {
@@ -594,6 +593,7 @@ class MyJTable extends JTable {
 	public MyJTable(Object[][] row, Object[] column) {
 		super(row, column);
 	}
+
 	public boolean isSetCellEditable(int row, int column) {
 		// ´Ü°¡ °ø±Þ°¡¾× ÆíÁý ºÒ°¡
 		if (column == 5 || column == 6) {
@@ -601,6 +601,7 @@ class MyJTable extends JTable {
 		}
 		return true;
 	}
+
 	public boolean isCellEditable(int row, int column) {
 		// ´Ü°¡ °ø±Þ°¡¾× ÆíÁý ºÒ°¡
 		if (column == 5 || column == 6) {

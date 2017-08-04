@@ -3,7 +3,6 @@ package Output;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import javax.swing.JOptionPane;
 
 import com.itextpdf.text.BaseColor;
@@ -22,7 +21,6 @@ import Estimate.Estimate;
 import Main.Main;
 import Product.Product;
 import Product.ProductList;
-import Product.ProductView;
 import Supply.Supply;
 
 public class PdfSave {
@@ -92,7 +90,7 @@ public class PdfSave {
 			JOptionPane.showMessageDialog(null, "pdf 파일을 닫고 다시 시도하세요.");
 		} catch (DocumentException e) {
 			JOptionPane.showMessageDialog(null, "pdf 파일을 닫고 다시 시도하세요.");
-		} catch (IOException e) {
+		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(null, "pdf 파일을 닫고 다시 시도하세요.");
 		}
 		document.close();
@@ -279,7 +277,6 @@ public class PdfSave {
 	}
 
 	public PdfPTable createTable(int tableWidth[], ProductList productList, int index) {
-		boolean end = false;
 		int count;
 		PdfPTable table = new PdfPTable(8);
 		table.setWidthPercentage(100f);

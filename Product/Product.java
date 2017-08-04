@@ -1,7 +1,7 @@
 package Product;
 
 import Main.Main;
-
+//Ç°¸ñ
 public class Product {
 	public String getName() {
 		return name;
@@ -131,5 +131,12 @@ public class Product {
 			return "";
 		else
 			return Main.longToMoneyString((materialCost + processedCost) * count);
+	}
+
+	public boolean isNull() {
+		if(name==null || name.equals("")){
+			return true;
+		}else
+			return false;
 	}
 }
