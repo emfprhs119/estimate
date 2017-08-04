@@ -1,16 +1,17 @@
 package Main;
 
-import java.awt.Button;
 import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.JFrame;
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
 import FrameComponent.MainFrame;
 
-public class MenuAction implements ActionListener {
+public class MenuAction extends MouseAdapter implements ActionListener {
 	JFrame frame;
 	Function function;
 	boolean isButton;
@@ -23,7 +24,7 @@ public class MenuAction implements ActionListener {
 		String str;
 		// 버튼 일경우 버튼의 라벨 메뉴 일경우 메뉴의 라벨 
 		if (isButton)
-			str= ((Button) e.getSource()).getLabel();
+			str= ((JButton) e.getSource()).getToolTipText();
 		else
 			str = ((MenuItem) e.getSource()).getLabel();
 		// 이름에 따른 함수 호출
@@ -35,17 +36,17 @@ public class MenuAction implements ActionListener {
 				switch (choice) {
 				case 0:
 					function.save();
-					new MainFrame();
+					new MainFrame(frame.getX(),frame.getY());
 					frame.setVisible(false);
 				case 1:
-					new MainFrame();
+					new MainFrame(frame.getX(),frame.getY());
 					frame.setVisible(false);
 				case 2:
 				}
 			}
 			else
 			{
-				new MainFrame();
+				new MainFrame(frame.getX(),frame.getY());
 				frame.setVisible(false);
 			}
 			break;
@@ -55,10 +56,10 @@ public class MenuAction implements ActionListener {
 		case "저장하기":
 			function.save();
 			break;
-		case "◀":
+		case "◀ 이전":
 			function.leftPage();
 			break;
-		case "▶":
+		case "다음 ▶":
 			function.rightPage();
 			break;
 		case "Pdf 내보내기":
@@ -68,7 +69,21 @@ public class MenuAction implements ActionListener {
 		case "종료":
 			System.exit(0);
 			break;
+		case "도움말":
+			((MainFrame) frame).helpPopup(true);
+			break;
+		case "About 견적서":
+			JOptionPane.showMessageDialog(frame, "Version : v1.0\nEmail : emfprhs119@gmail.com", "About 견적서",1);
+			break;
 		default:
 		}
+	}
+	@Override
+	public void mouseExited(MouseEvent e) {
+		((MainFrame) frame).helpPopup(false);
+	}
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		((MainFrame) frame).helpPopup(true);
 	}
 }

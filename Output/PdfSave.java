@@ -34,7 +34,7 @@ public class PdfSave {
 	public PdfSave() {
 		rgb = new BaseColor(255, 255, 150);
 		try {
-			BaseFont objFont = BaseFont.createFont("font/batang.ttc,0", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+			BaseFont objFont = BaseFont.createFont("resources/batang.ttc,0", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
 			titleFont = new Font(objFont, 50);
 			titleFont.setStyle(Font.BOLD);
 
@@ -49,6 +49,7 @@ public class PdfSave {
 
 			normal10Font = new Font(objFont, 10);
 		} catch (Exception e) {
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "폰트를 넣고 다시 시도하세요.");
 		}
 

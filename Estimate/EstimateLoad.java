@@ -5,8 +5,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
@@ -95,7 +93,7 @@ public class EstimateLoad extends JFrame {
 					JOptionPane.showMessageDialog(null, "견적서를 선택해 주세요.");
 					return;
 				}
-				removeFile(estimateList.getMatch(index).getPath());
+				removeFile(estimateList.getLoadData(index).getPath());
 			}
 
 		});
@@ -112,13 +110,13 @@ public class EstimateLoad extends JFrame {
 					JOptionPane.showMessageDialog(null, "견적서를 선택해 주세요.");
 					return;
 				}
-				loadFile(estimateList.getMatch(index).getPath());
+				loadFile(estimateList.getLoadData(index).getPath());
 			}
 		});
 		add(button[0]);
 		add(button[1]);
 	}
-
+/*
 	private void searchInit() {
 		int x = 140;
 		int y = 15;
@@ -200,7 +198,7 @@ public class EstimateLoad extends JFrame {
 		add(searchItemField);
 		add(searchButton);
 	}
-
+*/
 	void tableInit() {
 		row = new Object[0][3];
 		column = new Object[]{ "견적일", "상호", "No." };
@@ -234,7 +232,7 @@ public class EstimateLoad extends JFrame {
 		        	colum=table.columnAtPoint(e.getPoint());
 		        	decreasingFlag=true;
 		        }
-		        estimateList.matchSort(colum,decreasingFlag);
+		        estimateList.arrSort(colum,decreasingFlag);
 		    }
 		});
 		
@@ -251,7 +249,7 @@ public class EstimateLoad extends JFrame {
 						JOptionPane.showMessageDialog(null, "견적서를 선택해 주세요.");
 						return;
 					}
-					loadFile(estimateList.getMatch(index).getPath());
+					loadFile(estimateList.getLoadData(index).getPath());
 				}
 			}
 		});
@@ -273,13 +271,13 @@ public class EstimateLoad extends JFrame {
 	public void tableUpdate() {
 		estimateList.setList(loadList());
 		//estimateList.setMatchStr(searchCompField.getText(), searchItemField.getText());
-		if (estimateList.getMatchCount() == 0)
+		if (estimateList.getCount() == 0)
 			return;
-		tableSet(estimateList.getMatchCount());
-		for (int i = 0; i < estimateList.getMatchCount(); i++) {
-			table.setValueAt(estimateList.getMatch(i).getDate(), i, 0);
-			table.setValueAt(estimateList.getMatch(i).getName(), i, 1);
-			table.setValueAt(estimateList.getMatch(i).getNo(), i, 2);
+		tableSet(estimateList.getCount());
+		for (int i = 0; i < estimateList.getCount(); i++) {
+			table.setValueAt(estimateList.getLoadData(i).getDate(), i, 0);
+			table.setValueAt(estimateList.getLoadData(i).getName(), i, 1);
+			table.setValueAt(estimateList.getLoadData(i).getNo(), i, 2);
 		}
 	}
 
@@ -341,7 +339,8 @@ public class EstimateLoad extends JFrame {
 			}
 		}
 		try {
-			BufferedWriter fw = new BufferedWriter(new FileWriter("save\\견적서_" + fileName + ".csv"));
+			fileName="견적서_"+fileName;
+			BufferedWriter fw = new BufferedWriter(new FileWriter("save\\" + fileName + ".csv"));
 			fw.write("v1.0");
 			fw.write("\r\n");
 			stn = demand.getStrings();

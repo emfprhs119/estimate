@@ -17,7 +17,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -36,7 +35,7 @@ public class DemandLoad extends JFrame {
 	JPanel panel;
 	JTextField searchField;
 	JLabel searchLabel;
-	JButton searchButton;
+	Button searchButton;
 	DemandAdd demandAdd;
 	DemandList demandList;
 
@@ -48,7 +47,7 @@ public class DemandLoad extends JFrame {
 		demandList = new DemandList();
 		searchField = new JTextField(14);
 		searchLabel = new JLabel("상호");
-		searchButton = new JButton("검색");
+		searchButton = new Button("검색");
 		searchButton.setFont(new Font(Main.font, 0, 10));
 		setBounds(200, 300, 380, 600);
 		setLayout(null);
