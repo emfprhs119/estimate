@@ -119,7 +119,7 @@ public class DemandView extends WhitePanel {
 	public void setDemand(Demand demand) {
 		if (demand.getDate() != null) {
 			String[] token = demand.getDate().split("-");
-			model.setDate(Integer.parseInt(token[0]), Integer.parseInt(token[1])-1, Integer.parseInt(token[2]));
+			model.setDate(Integer.parseInt(token[0].replaceAll(" ","")), Integer.parseInt(token[1].replaceAll(" ",""))-1, Integer.parseInt(token[2].replaceAll(" ","")));
 			model.setSelected(true);
 		}
 		rightTextField[1].setText(demand.getName());

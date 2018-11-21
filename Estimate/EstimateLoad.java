@@ -310,8 +310,10 @@ public class EstimateLoad extends JFrame {
 					continue;
 				String name = stn[1];
 				String date = stn[2];
-				String no = stn[3].replaceAll(".csv", "");
-				estimateList.addList(new LoadData(date, name, no));
+				String no = stn[3].split("\\.")[0];
+				String ext = stn[3].split("\\.")[1];
+				
+				estimateList.addList(new LoadData(date, name, no,ext));
 			}
 		}
 		return estimateList;
@@ -339,7 +341,9 @@ public class EstimateLoad extends JFrame {
 			}
 		}
 		try {
-			fileName="견적서_"+fileName;
+			System.out.println("save\\" + "견적서_"+fileName);
+			removeFile("save\\" +"견적서_"+ fileName);
+			fileName="견적서_"+fileName.replace(".save", "");
 			BufferedWriter fw = new BufferedWriter(new FileWriter("save\\" + fileName + ".csv"));
 			fw.write("v1.0");
 			fw.write("\r\n");
@@ -376,7 +380,8 @@ public class EstimateLoad extends JFrame {
 		String st;
 		try {
 			fr = new BufferedReader(new FileReader(fileName));
-			if (fr.readLine().equals("v1.0")) {
+			st = fr.readLine();
+			if (st.equals("v1.0")) {
 				String stn[] = CsvPasser.csvSplit(fr.readLine());
 				for (int i = 0; i < 4; i++)
 					if (stn[i].equals("-"))
@@ -395,7 +400,49 @@ public class EstimateLoad extends JFrame {
 					for (int i = 0; i < 6; i++)
 						if (stn[i].equals("-"))
 							stn[i] = "";
-					est.getProductList().addProduct(stn);
+					
+					boolean flag = false;
+					for (int i = 0; i < 6; i++) {
+						if (!stn[i].equals("")) {
+							flag=true;
+							break;
+						}
+					}
+					if (flag)
+						est.getProductList().addProduct(stn);
+				}
+			}else {
+				String stl[] = st.split("/");
+				String stn[] = new String[4];
+				for (int i = 0; i < 4; i++) {
+					stn[i] = stl[i];
+					stn[i] = stn[i].replaceAll(" ","");
+				}
+				est.setDemand(new Demand(stn));
+				if (stl.length>6) {
+					int intArr[] = new int[8];
+					for (int i = 0; i < 8; i++) {
+						intArr[i] = Integer.parseInt(stl[i+5]);
+					}
+					est.setTableWidth(intArr);
+				}else {
+					est.setTableWidth(Main.tableSize);
+				}
+				while (null != (st = fr.readLine())) {
+					stn = st.split("/");
+					for (int i = 0; i < 6; i++)
+						stn[i] = stn[i].replaceAll(" ","");
+					boolean flag = false;
+					
+					for (int i = 0; i < 6; i++) {
+						if (!stn[i].equals("")) {
+							flag=true;
+							break;
+						}
+					}
+					
+					if (flag)
+						est.getProductList().addProduct(stn);
 				}
 			}
 			fr.close();

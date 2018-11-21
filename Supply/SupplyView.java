@@ -1,11 +1,15 @@
 package Supply;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -19,11 +23,13 @@ public class SupplyView extends WhitePanel{
 	JLabel sup[];
 	WhitePanel pane;
 	Font defaultFont;
+	SupplyEdit supplyEdit;
 	public SupplyView(ViewManager viewManager) {
 		defaultFont=new Font(Main.font,Font.BOLD, 15);
 		pane=this;
 		sup = new JLabel[8];
 		setBounds(358, 90, 500, 200);
+		supplyEdit = new SupplyEdit(this);
 		init();
 		loadSupply();
 	}
@@ -80,6 +86,16 @@ public class SupplyView extends WhitePanel{
 		sup[5].setBounds(253, 45, 500, 200);
 		sup[6].setBounds(90, 81, 500, 200);
 		sup[7].setBounds(253, 81, 500, 200);
+		
+		JButton button = new JButton("...");
+		button.setBounds(14,170,28,25);
+		button.setPreferredSize(new Dimension(28, 25));
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				editSupply();
+			}
+		});
+		pane.add(button);
 	}
 	
 	void loadSupply() {
@@ -90,10 +106,11 @@ public class SupplyView extends WhitePanel{
 				for (int i = 0; i < 8; i++) {
 					st = fr.readLine();
 					String stn[] = CsvPasser.csvSplit(st);
-					sup[i].setText(stn[1]);
+					if (stn.length>1)
+						sup[i].setText(stn[1]);
 				}
 			} catch (IOException e2) {
-				JOptionPane.showMessageDialog(null, "supply.csv를 불러올 수 없습니다.");
+				JOptionPane.showMessageDialog(null, "공급자가 없습니다.");
 			}
 		}
 	public Supply getSupply(){
@@ -112,9 +129,9 @@ public class SupplyView extends WhitePanel{
 		super.paint(g);
 		g.setColor(Color.black);
 		g.drawRect(12, 9, 365, 187);
-		g.drawRect(42, 9, 42, 43);
+		g.drawRect(43, 9, 41, 43);
 		for (int i = 0; i < 4; i++) {
-			g.drawRect(42, 52 + 36 * i, 42, 36);
+			g.drawRect(43, 52 + 36 * i, 41, 36);
 		}
 		for (int i = 0; i < 4; i++) {
 			if (i != 1)
@@ -134,6 +151,9 @@ public class SupplyView extends WhitePanel{
 		supply.setWork2(supply.getWork2());
 		supply.setTel(supply.getTel());
 		supply.setFax(supply.getFax());
+	}
+	public void editSupply() {
+		supplyEdit.setVisible(true);
 	}
 }
 

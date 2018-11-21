@@ -1,3 +1,4 @@
 *.class
 save/
 save_pdf/
+*.csv

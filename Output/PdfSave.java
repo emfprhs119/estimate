@@ -58,12 +58,11 @@ public class PdfSave {
 	public void exportPDF(String fName, Estimate est) {
 		Document document = new Document();
 		document.setMargins(45, 45, 45, 45);
-		String path = "save_pdf";
+		String path = "pdf\\"+est.getDemand().getName();
 		Paragraph paragraph;
 		try {
 			File a = new File(path);
 			if (a.exists() == false) {
-
 				a.mkdirs();
 			}
 			PdfWriter.getInstance(document, new FileOutputStream(path + "\\" + fName + ".pdf"));
@@ -95,7 +94,7 @@ public class PdfSave {
 			JOptionPane.showMessageDialog(null, "pdf 파일을 닫고 다시 시도하세요.");
 		}
 		document.close();
-
+		JOptionPane.showMessageDialog(null, "pdf 파일이 저장되었습니다.");
 	}
 
 	private void writeInit(Document document, Estimate est) {

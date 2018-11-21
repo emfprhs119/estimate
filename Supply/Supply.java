@@ -9,7 +9,7 @@ public class Supply{
 	private String work2;	// 종목
 	private String tel;	// 전화
 	private String fax;	// 팩스
-	
+	public static String supplyArr[] = {"사업자 등록번호","상호","대표","주소","업태","종목","전화","팩스"}; 
 	public String getCompany() {
 		return company;
 	}

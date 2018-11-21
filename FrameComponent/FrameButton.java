@@ -24,7 +24,7 @@ public class FrameButton {
 		button[2] = new JButton("새 견적서");
 		button[3] = new JButton("불러오기");
 		button[4] = new JButton("저장하기");
-		button[5] = new JButton("내보내기");
+		button[5] = new JButton("PDF");
 		
 		button[6] = getQuestionIcon(30,30);
 

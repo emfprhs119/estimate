@@ -97,12 +97,18 @@ public class Product {
 	}
 
 	public Product(String[] stn) {
-		name = stn[0];
-		standard = stn[1];
-		materialCost = Long.parseLong(stn[2]==""?"0":Main.stringToLongString(stn[2]));
-		processedCost = Long.parseLong(stn[3]==""?"0":Main.stringToLongString(stn[3]));
-		count = Long.parseLong(stn[4]==""?"0":Main.stringToLongString(stn[4]));
-		etc = stn[5];
+		if (stn[0]!=null)
+			name = stn[0];
+		if (stn[1]!=null)
+			standard = stn[1];
+		if (stn[2]!=null)
+			materialCost = Long.parseLong(stn[2]==""?"0":Main.stringToLongString(stn[2]));
+		if (stn[3]!=null)
+			processedCost = Long.parseLong(stn[3]==""?"0":Main.stringToLongString(stn[3]));
+		if (stn[4]!=null)
+			count = Long.parseLong(stn[4]==""?"0":Main.stringToLongString(stn[4]));
+		if (stn[5]!=null)
+			etc = stn[5];
 	}
 
 	public void setProduct(Product product) {

@@ -16,15 +16,17 @@ public class LoadData {
 	private String date;
 	private String name;
 	private String no;
+	private String ext;
 
-	LoadData(String date, String name,String no) {
+	LoadData(String date, String name,String no,String ext) {
 		this.date = date;
 		this.name = name;
 		this.no = no;
+		this.ext = ext;
 	}
 
 	public String getPath() {
-		return "save\\견적서_"+name+"_"+date+"_"+no+".csv";
+		return "save\\견적서_"+name+"_"+date+"_"+no+"."+ext;
 	}
 	public String getString() {
 		return "견적서_"+name+"_"+date+"_"+no;

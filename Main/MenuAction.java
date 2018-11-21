@@ -56,6 +56,8 @@ public class MenuAction extends MouseAdapter implements ActionListener {
 		case "저장하기":
 			function.save();
 			break;
+		case "공급자 수정":
+			function.supplyEdit();
 		case "◀ 이전":
 			function.leftPage();
 			break;
@@ -63,17 +65,20 @@ public class MenuAction extends MouseAdapter implements ActionListener {
 			function.rightPage();
 			break;
 		case "Pdf 내보내기":
+		case "PDF":
 		case "내보내기":
 			function.pdfSave();
 			break;
 		case "종료":
 			System.exit(0);
 			break;
+			/*
 		case "도움말":
 			((MainFrame) frame).helpPopup(true);
 			break;
+			*/
 		case "About 견적서":
-			JOptionPane.showMessageDialog(frame, "Version : v1.0\nEmail : emfprhs119@gmail.com", "About 견적서",1);
+			JOptionPane.showMessageDialog(frame, "Version : "+Main.version+"\nEmail : emfprhs119@gmail.com", "About 견적서",1);
 			break;
 		default:
 		}

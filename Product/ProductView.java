@@ -188,7 +188,7 @@ public class ProductView {
 			for (int j = 0; j < 8; j++) {
 				if (table.getValueAt(i, j) != null) {
 					if (!table.getValueAt(i, j).toString()
-							.matches("[a-zA-Z0-9¤¡-¤¾¤¿-¤Ó°¡-ÆR`~!@#$%^&*()-_=+|{};:',.<>/]+")) {
+							.matches("[ a-zA-Z0-9¤¡-¤¾¤¿-¤Ó°¡-ÆR`~!@#$%&*()-_=+|{};:',.<>/]+")) {
 						table.setValueAt(null, i, j);
 					}
 					if (j >= 2 && j <= 4) {

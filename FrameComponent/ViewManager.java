@@ -12,7 +12,7 @@ public class ViewManager {
 	public DemandView getDemandView() {
 		return demandView;
 	}
-	protected SupplyView getSupplyView() {
+	public SupplyView getSupplyView() {
 		return supplyView;
 	}
 	public ProductView getProductView() {

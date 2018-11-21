@@ -66,6 +66,9 @@ public class Function {
 		}
 		refresh();
 	}
+	public void supplyEdit() {
+		viewManager.getSupplyView().editSupply();
+	}
 	/*
 	// 페이지 추가
 	void addPage() {
