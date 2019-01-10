@@ -1,5 +1,10 @@
 package Demand;
 
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.function.Predicate;
+
 import javax.swing.JOptionPane;
 
 //거리처 리스트
@@ -88,18 +93,19 @@ class DemandList {
 		return demandArr[index];
 	}
 	
-	public void matchSort(int num,boolean decreasingFlag) {
-		for(int i=0;i<matchCount-1;i++){
-			for(int j=0;j<matchCount-1;j++){
-				if(demandMatch[j].compareTo(demandMatch[j+1],num)>0){
-					if (decreasingFlag)
-						matchSwap(j,j+1);
-				}else if (demandMatch[j].compareTo(demandMatch[j+1],num)<0){
-					if (!decreasingFlag)
-						matchSwap(j,j+1);
-				}
+	public void matchSort() {
+		List<Demand> list = Arrays.asList(demandArr);
+		list.sort(new Comparator<Demand>() {
+			@Override
+			public int compare(Demand o1, Demand o2) {
+				if (o1==null || o2==null)
+					return 0;
+				else
+					return o1.getName().compareTo(o2.getName());
 			}
-		}
+		});
+		demandArr = (Demand[]) list.toArray();
+		System.out.println();
 	}
 	public void matchSwap(int i,int j){
 		Demand tmp=demandMatch[i];

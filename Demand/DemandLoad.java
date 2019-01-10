@@ -149,7 +149,6 @@ public class DemandLoad extends JFrame {
 		        	colum=table.columnAtPoint(e.getPoint());
 		        	decreasingFlag=true;
 		        }
-		        demandList.matchSort(colum,decreasingFlag);
 		    }
 		});
 		table.addMouseListener(new MouseAdapter() {
@@ -188,6 +187,7 @@ public class DemandLoad extends JFrame {
 			return;
 
 		tableSet(demandList.getMatchCount());
+		demandList.matchSort();
 		for (int i = 0; i < demandList.getMatchCount(); i++) {
 			table.setValueAt(demandList.getMatch(i).getName(), i, 0);
 			table.setValueAt(demandList.getMatch(i).getTel(), i, 2);
