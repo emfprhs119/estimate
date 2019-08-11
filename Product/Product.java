@@ -47,16 +47,22 @@ public class Product {
 	public void setMaterialCost(String materialCost) {
 		if (materialCost != null)
 			this.materialCost = Long.parseLong(materialCost.replace(",", ""));
+		else
+			this.materialCost = 0;
 	}
 
 	public void setProcessedCost(String processedCost) {
 		if (processedCost != null)
 			this.processedCost = Long.parseLong(processedCost.replace(",", ""));
+		else
+			this.processedCost = 0;
 	}
 
 	public void setCount(String count) {
 		if (count != null)
 			this.count = Long.parseLong(count.replace(",", ""));
+		else
+			this.count = 0;
 	}
 
 	public void setEtc(String etc) {

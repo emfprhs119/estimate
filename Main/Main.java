@@ -6,7 +6,7 @@ import FrameComponent.MainFrame;
 
 public class Main {
 	public final static Color YELLOW = Color.getHSBColor((float) 0.160, (float) 0.42, (float) 0.98);
-	public static String version = "v1.1";
+	public static String version = "v1.2";
 	public static String font = "Serif"; 	//default font
 	public static int fontSize=17;			//default fontSize
 	public static int tableSize[]={235,95,85,85,50,95,95,45}; //default tableSize

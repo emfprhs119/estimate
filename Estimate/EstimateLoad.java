@@ -331,10 +331,15 @@ public class EstimateLoad extends JFrame {
 		int number = 0;
 		if (fileName.equals("New Document") || !fileName.matches(demand.getName() + "_" + demand.getDate() + ".+")) {
 			while (true) {
+				//FILE NAME IS NOT MATCH CSV FILE
+				
 				fileName = new String(demand.getName() + "_" + demand.getDate() + "_" + number);
-				a = new File(fileName);
+				a = new File("save\\" + "°ßÀû¼­_"+fileName+".csv");
+				System.out.println("numq"+number+a.exists());
+				System.out.println(fileName);
 				if (a.exists() == true) {
 					number++;
+					System.out.println("num"+number);
 					continue;
 				}
 				break;
